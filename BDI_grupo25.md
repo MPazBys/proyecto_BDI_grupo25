@@ -7,8 +7,8 @@
 ## Proyecto Base de Datos
 
 ### Alumnos:
-- **Cardozo, Micaela** - DNI: [pendiente]
-- **Bys, Paz** - DNI: [pendiente]
+- **Bys, Paz** - DNI: 46.242.480
+- **Cardozo, Micaela** - DNI: 46.461.620
 - **Cespedes, Hernan** - DNI: 42.739.764
 - **Centurion Villamayor, Giovanni Isaias** - DNI: 96.079.673
 
