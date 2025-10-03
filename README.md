@@ -2,7 +2,7 @@
 Este espacio propone presentar la información para organizar el desarrollo del Proyecto de Estudio de la asignatura Bases de Datos I (FaCENA - UNNE)
 
 
-# Proyecto de Estudio!
+# Proyecto de Estudio
 
 Este espacio propone presentar la información para organizar el desarrollo del Proyecto de Estudio de la asignatura Bases de Datos I (FaCENA - UNNE)
 
@@ -12,6 +12,6 @@ Este espacio propone presentar la información para organizar el desarrollo del 
     > ## BaseDeDatos1_Proyecto_Estudio
     - doc (carpeta con documentos e imágenes asociados al contenido principal)
 		  BDI_grupo25.docx (Documento del informe del proyecto)
-		  diagramaBD.jpg (Imagen del diagrama de Entidad Relacion de la BD)
+		  diagramaBD.png (Imagen del diagrama de Entidad Relacion de la BD)
 
     - BDI_grupo25.md (documento principal estructurado por capítulos)
