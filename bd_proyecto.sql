@@ -14,7 +14,7 @@ CREATE TABLE persona
 
 CREATE TABLE ubicacion_mesa
 (
-  id_ubicacion INT NOT NULL,
+  id_ubicacion INT IDENTITY(1,1) NOT NULL,
   ubicacion VARCHAR(30) NOT NULL,
   CONSTRAINT pk_ubicacion PRIMARY KEY (id_ubicacion)
 );
@@ -22,7 +22,7 @@ CREATE TABLE ubicacion_mesa
 
 CREATE TABLE mesa
 (
-  id_mesa INT NOT NULL,
+  id_mesa INT IDENTITY(1,1) NOT NULL,
   nro_mesa INT NOT NULL,
   capacidad INT NOT NULL,
   id_ubicacion INT NOT NULL,
@@ -45,12 +45,14 @@ CREATE TABLE evento
   CONSTRAINT pk_evento PRIMARY KEY (id_evento)
 );
 
+
 CREATE TABLE cliente
 (
   dni_cliente INT NOT NULL,
   CONSTRAINT pk_cliente PRIMARY KEY (dni_cliente),
   CONSTRAINT fk_cliente_persona FOREIGN KEY (dni_cliente) REFERENCES persona(dni)
 );
+
 
 CREATE TABLE rol_empleado
 (
@@ -62,7 +64,7 @@ CREATE TABLE rol_empleado
 
 CREATE TABLE turno_empleado
 (
-  id_turno INT NOT NULL,
+  id_turno INT IDENTITY(1,1) NOT NULL ,
   inicio_turno INT NOT NULL,
   fin_turno INT NOT NULL,
   CONSTRAINT pk_turno PRIMARY KEY (id_turno)
@@ -79,13 +81,12 @@ CREATE TABLE empleado
   CONSTRAINT fk_turno_empleado FOREIGN KEY (id_turno) REFERENCES turno_empleado(id_turno)
 );
 
-
 CREATE TABLE reserva
 (
-  id_reserva INT NOT NULL,
+  id_reserva INT IDENTITY(1,1) NOT NULL,
   fecha_reserva DATE NOT NULL,
   cant_personas INT NOT NULL,
-  fecha_max_cancelacion DATE NOT NULL,
+  fecha_max_cancelacion AS DATEADD(day, -2, fecha_reserva), --Columna calculada en base a la fecha ingresada para la reserva
   id_estado INT NOT NULL,
   id_evento INT NOT NULL,
   dni_cliente INT NOT NULL,
@@ -118,7 +119,7 @@ CREATE TABLE metodo_pago
 
 CREATE TABLE pagos
 (
-  id_pago INT NOT NULL,
+  id_pago INT IDENTITY(1,1) NOT NULL,
   monto FLOAT NOT NULL,
   fecha_pago DATE NOT NULL,
   id_metodo INT NOT NULL,
