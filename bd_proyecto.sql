@@ -1,3 +1,5 @@
+CREATE DATABASE proyecto2025
+USE proyecto2025
 
 CREATE TABLE persona
 (
