@@ -175,10 +175,10 @@ ADD CONSTRAINT chk_pagos_monto CHECK (monto > 0),
 
 -- =================================================================================
 --- OBS
--- Las mesas estan pensadas como para que haya una mesa 1 en terraza y mesa 1 en plantabaja
--- La reserva puede ser tomado por el rol 3 o mozo
--- El pago debe ser realizado en la fecha actual
--- Las reservas pueden ser hechas para el futuro pero por motivos practicos esta como comentado
+-- Las mesas estan pensadas como para que haya una mesa 1 en terraza y mesa 1 en plantabaja.
+-- La reserva puede ser tomado por el rol 3 o mozo.
+-- El pago debe ser realizado en la fecha actual.
+-- Las reservas pueden ser hechas para el futuro pero por motivos practicos esta como comentado.
 
 
 
