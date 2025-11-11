@@ -14,7 +14,10 @@ ALTER TABLE persona
 ADD CONSTRAINT chk_persona_dni_pos CHECK (dni > 0),
     CONSTRAINT chk_persona_telefono_pos CHECK (telefono > 0),
     CONSTRAINT chk_persona_email_formato CHECK (email LIKE '%@%.%');
-
+--ALTER TABLE persona ADD CONSTRAINT uq_persona_email UNIQUE (email);
+--Importante restriccion pero en el lote de datos hay emails repetidos
+--ALTER TABLE persona ADD CONSTRAINT UQ_Persona_Tel UNIQUE (telefono);
+--Mismo caso para el telefono
 
 CREATE TABLE ubicacion_mesa
 (
@@ -22,7 +25,8 @@ CREATE TABLE ubicacion_mesa
   ubicacion VARCHAR(30) NOT NULL,
   CONSTRAINT pk_ubicacion PRIMARY KEY (id_ubicacion)
 );
-
+ALTER TABLE ubicacion_mesa 
+ADD CONSTRAINT uq_ubicacion_name UNIQUE (ubicacion);
 
 CREATE TABLE mesa
 (
@@ -35,6 +39,8 @@ CREATE TABLE mesa
 ALTER TABLE mesa
 ADD CONSTRAINT chk_mesa_capacidad_pos CHECK (capacidad > 0);
 
+
+
 CREATE TABLE estado_reserva
 (
   id_estado INT NOT NULL,
@@ -43,6 +49,8 @@ CREATE TABLE estado_reserva
 );
 ALTER TABLE estado_reserva
 ADD CONSTRAINT chk_estado_id_pos CHECK (id_estado > 0);
+ALTER TABLE estado_reserva
+ADD CONSTRAINT uq_estado_name UNIQUE (estado);
 
 CREATE TABLE evento
 (
@@ -52,6 +60,9 @@ CREATE TABLE evento
 );
 ALTER TABLE evento
 ADD CONSTRAINT chk_evento_id_pos CHECK (id_evento > 0);
+ALTER TABLE evento 
+ADD CONSTRAINT uq_evento_name UNIQUE (nombre_evento);
+
 
 CREATE TABLE cliente
 (
@@ -69,6 +80,9 @@ CREATE TABLE rol_empleado
 );
 ALTER TABLE rol_empleado
 ADD CONSTRAINT chk_rol_id_pos CHECK (id_rol > 0);
+ALTER TABLE rol_empleado 
+ADD CONSTRAINT uq_rol UNIQUE (descripcion);
+
 
 CREATE TABLE turno_empleado
 (
@@ -78,7 +92,7 @@ CREATE TABLE turno_empleado
   CONSTRAINT pk_turno PRIMARY KEY (id_turno)
 );
 ALTER TABLE turno_empleado
-ADD CONSTRAINT chk_turno_valido CHECK (fin_turno > inicio_turno);
+ADD CONSTRAINT chk_turno_valido CHECK (fin_turno > inicio_turno OR inicio_turno > fin_turno);
 
 
 CREATE TABLE empleado
@@ -124,9 +138,11 @@ CREATE TABLE reserva_mesa
   id_mesa INT NOT NULL,
   id_ubicacion INT NOT NULL,
   CONSTRAINT pk_reserva_mesa PRIMARY KEY (id_reserva, id_mesa, id_ubicacion),
-  CONSTRAINT fk_reserva FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva),
+  CONSTRAINT fk_reserva FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva) ON DELETE CASCADE,
   CONSTRAINT fk_mesa FOREIGN KEY (id_mesa, id_ubicacion) REFERENCES mesa(id_mesa, id_ubicacion)
 );
+ALTER TABLE reserva_mesa
+ADD CONSTRAINT uq_reservaMesa_asignacion UNIQUE (id_reserva, id_mesa,id_ubicacion);
 
 CREATE TABLE metodo_pago
 (
@@ -136,7 +152,8 @@ CREATE TABLE metodo_pago
 );
 ALTER TABLE metodo_pago
 ADD CONSTRAINT chk_metodo_id_pos CHECK (id_metodo > 0);
-
+ALTER TABLE metodo_pago
+ADD CONSTRAINT uq_metodo_name UNIQUE (forma_pago);
 
 CREATE TABLE pagos
 (
@@ -147,15 +164,21 @@ CREATE TABLE pagos
   id_reserva INT NOT NULL,
   CONSTRAINT pk_pagos PRIMARY KEY (id_pago, id_reserva),
   CONSTRAINT fk_pago_metodo FOREIGN KEY (id_metodo) REFERENCES metodo_pago(id_metodo),
-  CONSTRAINT fk_pago_reserva FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva)
+  CONSTRAINT fk_pago_reserva FOREIGN KEY (id_reserva) REFERENCES reserva(id_reserva) ON DELETE CASCADE  
 );
+ALTER TABLE pagos
+ADD CONSTRAINT UQ_Pago_Reserva UNIQUE (id_reserva);
 ALTER TABLE pagos
 ADD CONSTRAINT chk_pagos_monto CHECK (monto > 0),
     CONSTRAINT chk_pagos_fecha_actual CHECK (fecha_pago <= GETDATE());
 
+
+-- =================================================================================
 --- OBS
 -- Las mesas estan pensadas como para que haya una mesa 1 en terraza y mesa 1 en plantabaja
 -- La reserva puede ser tomado por el rol 3 o mozo
 -- El pago debe ser realizado en la fecha actual
 -- Las reservas pueden ser hechas para el futuro pero por motivos practicos esta como comentado
+
+
 
