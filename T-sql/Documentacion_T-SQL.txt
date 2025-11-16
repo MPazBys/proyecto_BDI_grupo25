@@ -1,0 +1,78 @@
+====================================================
+DOCUMENTACION DE TRANSACCIONES Y PRUEBAS 
+		RESTAURANTE 2025
+=====================================================
+
+1. RESUMEN FUNCIONAL DE TRANSACCIONES
+
+A. TRANSACCION: CREACIÓN DE RESERVA
+    * **Objetivo:** Registrar una reserva y asignarle una mesa.
+    * **Operaciones:**
+        * INSERT en reserva.
+        * INSERT en reserva_mesa.
+    * **Validaciones Previas:**
+        * Evitar duplicidad (mismo cliente y fecha/hora).
+        * Verificar el rol del empleado asignador y que cumpla que el mozo cree la reserva.
+
+B. TRANSACCION: REGISTRO DE PAGO
+    * **Objetivo:** Registrar un pago y actualizar el estado de la reserva a "Pagado".
+    * **Operaciones:**
+        * INSERT en pagos.
+        * UPDATE en reserva (cambia el estado).
+    * **Validaciones Previas:**
+        * Evitar pagos duplicados para la misma reserva.
+
+C. TRANSACCION: CANCELACIÓN DE RESERVA
+    * **Objetivo:** Cambiar el estado de una reserva a "Cancelado" y liberar la(s) mesa(s).
+    * **Operaciones:**
+        * UPDATE en reserva (cambia el estado).
+        * DELETE en reserva_mesa (libera mesas).
+    * **Validaciones Previas:**
+        * Ninguna específica.
+
+D. TRANSACCION: ASIGNACIÓN/CAMBIO DE ROL DEL EMPLEADO
+    * **Objetivo:** Actualizar simultáneamente el rol y el turno de un empleado.
+    * **Operaciones:**
+        * UPDATE en empleado (cambia rol y turno).
+    * **Validaciones Previas:**
+        * Ninguna específica.
+
+-----------------------------------------------------
+
+2. CASOS DE FALLO Y EFECTIVIDAD DEL MANEJO DE ERRORES
+
+Todas las transacciones usan un bloque `BEGIN TRY...BEGIN CATCH` con `IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION;` para asegurar la atomicidad.
+
+A. CREACIÓN DE RESERVA (PRUEBA DE FALLO)
+    * **Fallo Intencional:** Error de Clave Externa (Foreign Key) al intentar insertar una mesa inexistente en `reserva_mesa` (el segundo paso).
+    * **Resultado del ROLLBACK:** El primer `INSERT` (la reserva principal) **se revierte** y no queda en la base de datos.
+    * **Conclusión:** Se demostró la **atomicidad**, el primer cambio fue deshecho.
+
+B. REGISTRO DE PAGO (PRUEBA DE FALLO)
+    * **Fallo Intencional:** Error de Ejecución (`SELECT 1/0`) forzado después del `INSERT` en la tabla `pagos` (el primer paso).
+    * **Resultado del ROLLBACK:** El `INSERT` del pago **se revierte** y el estado de la reserva **no se actualiza** a "Pagado".
+    * **Conclusión:** Se demostró la **consistencia**, el pago y la actualización son tratados como una única unidad.
+
+C. CANCELACIÓN DE RESERVA (PRUEBA DE FALLO)
+    * **Fallo Intencional:** Error de Ejecución (`SELECT 1/0`) forzado después del `UPDATE` del estado de la reserva (el primer paso).
+    * **Resultado del ROLLBACK:** El estado de la reserva **vuelve a su valor original** (no queda como "Cancelado").
+    * **Conclusión:** Se demostró que el `UPDATE` fue reversible, manteniendo la consistencia ante el fallo del proceso completo.
+
+D. ASIGNACIÓN/CAMBIO DE ROL (PRUEBA DE FALLO)
+    * **Fallo Intencional:** Error de Ejecución (`SELECT 1/0`) forzado inmediatamente después del `UPDATE` de rol y turno.
+    * **Resultado del ROLLBACK:** Los valores de `id_rol` y `id_turno` del empleado **vuelven a sus valores originales**.
+    * **Conclusión:** Se demostró que el cambio de dos campos dependientes fue atómico y reversible.
+-----------------------------------------------------
+
+3. CONCLUSION EN BASE A LAS PRUEBAS REALIZADAS
+
+Las pruebas de fallo intencional han verificado exitosamente la solidez y la precisión del código de transacciones T-SQL, confirmando lo siguiente:
+
+1. Garantía de Atomicidad : En todos los escenarios probados, al forzar un error entre las operaciones que componen la unidad lógica de trabajo, el código activó correctamente el bloque CATCH y ejecutó el ROLLBACK.
+
+2. Consistencia de Datos: El estado final de la base de datos, tras la reversión de las operaciones fallidas, siempre reflejó el estado previo al inicio de la transacción. Los cambios iniciales fueron restaurados o deshechos.
+
+3. Efectividad del Manejo de Errores: El diseño utilizado es una implementación eficiente y robusta que combina validaciones de lógica de negocio previas (con RAISERROR) y el manejo de errores de ejecución (con ROLLBACK).
+
+En resumen, las transacciones cumplen rigurosamente con el requisito de solo confirmar los datos si la operación completa es exitosa, asegurando la integridad del sistema.*/
+
