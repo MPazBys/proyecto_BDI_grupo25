@@ -20,7 +20,7 @@ EXECUTE sp_helpindex 'reserva'
 
 
 
-
+--Se realizan las consultas sobre la tabla reserva
 SELECT * ----Nro de registros devueltos:530375 
 FROM reserva
 WHERE fecha_reserva BETWEEN '2022-03-14' AND '2024-11-07' 
@@ -52,6 +52,7 @@ AND dni_cliente BETWEEN '11000000' AND '15000000'
 						----Tercer Intento 1551 ms/1,551 seg
 -----------------
 
+
 ---Creamos un indice agrupado sobre la columna fecha_reserva
 CREATE CLUSTERED INDEX IX_fecha_reserva ON reserva(fecha_reserva);
 -----------------
@@ -59,6 +60,7 @@ CREATE CLUSTERED INDEX IX_fecha_reserva ON reserva(fecha_reserva);
 --Se verifica que el indice esté
 --creado correctamente en la tabla reserva
 EXECUTE sp_helpindex 'reserva'
+-----------------
 
 --Se repiten las consultas previas sobre la tabla reserva
 SELECT * ----Nro de registros devueltos:530375 
