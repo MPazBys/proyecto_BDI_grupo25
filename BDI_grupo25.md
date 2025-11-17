@@ -581,7 +581,16 @@ Las fuentes consultadas se clasifican de la siguiente manera:
 
 # CAPÍTULO V
 ## CONCLUSIÓN
-Hemos concluido en que, nuestro trabajo en el Proyecto Restaurant 2025 nos permitió comprender que la solidez de un sistema no solo reside en su esquema relacional, sino en la integridad de su lógica de negocio. Logramos modularizar las operaciones diarias mediante Procedimientos Almacenados, estandarizando el acceso a los datos. La implementación rigurosa de Transacciones ACID con manejo de errores TRY/CATCH fue crucial, enseñándonos a garantizar la fiabilidad del sistema en operaciones críticas como reservas y pagos. Sin embargo, la lección más significativa provino de la fase de optimización: al realizar el benchmarking, comprobamos que una gestión adecuada de los índices (tanto Agrupados simples como compuestos) tiene un impacto directo en el tiempo de respuesta OLTP. Además, la introducción de Índices Columnares demostró una superioridad abrumadora para las consultas analíticas de agregación, confirmando la importancia de seleccionar la estrategia de indexación correcta para cada tipo de carga de trabajo. Concluimos que hemos entregado una base de datos funcional, segura y con un rendimiento validado para la operación a gran escala.
+El desarrollo del Proyecto Restaurante 2025 ha demostrado que la construcción de un sistema de base de datos eficiente y escalable no depende únicamente del diseño de su 
+esquema relacional, sino de la implementación estratégica de mecanismos avanzados de SQL Server que garanticen integridad, seguridad y rendimiento.
+
+En primer lugar, la modularización de la lógica de negocio mediante **Procedimientos y Funciones Almacenadas** nos permitió encapsular operaciones complejas, reduciendo el tráfico de red y centralizando el mantenimiento. Esta práctica no solo optimiza el rendimiento mediante la reutilización de planes de ejecución, sino que establece una capa crítica de seguridad contra inyecciones SQL.
+
+La robustez del sistema se cimentó en la gestión de **Transacciones bajo el modelo ACID.** Aprendimos que la fiabilidad operativa en procesos críticos, como la gestión de reservas y pagos, depende de un control estricto de la concurrencia y la implementación de bloques TRY...CATCH para asegurar la atomicidad. La capacidad de revertir operaciones fallidas de manera controlada es lo que distingue a un sistema profesional de uno vulnerable.
+
+Finalmente, la fase de optimización reveló el impacto tangible de una estrategia de indexación adecuada. A través del benchmarking, comprobamos cómo los **Índices Agrupados** (Clustered) y No Agrupados son vitales para la velocidad de las operaciones transaccionales (OLTP). Por otro lado, la implementación de **Índices Columnares** evidenció una superioridad drástica en el rendimiento de consultas analíticas masivas, ofreciendo una compresión y velocidad de respuesta inalcanzables con métodos tradicionales.
+
+En conclusión, este proyecto ha validado que la excelencia en la administración de bases de datos reside en el equilibrio técnico: garantizar la consistencia transaccional para la operación diaria, mientras se implementan estructuras de almacenamiento avanzadas para el análisis de datos a gran escala.
 
 # CAPÍTULO VI
 ## Referencias Bibliográficas
