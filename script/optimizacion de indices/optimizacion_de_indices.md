@@ -16,7 +16,7 @@ En este proyecto estaremos usando los índices agrupados o también conocidos co
 
 **Analogía**: Es como ordenar un archivo de documentos por fecha de manera cronológica; los papeles mismos están físicamente en ese orden.
 
-##Índice No Agrupado (Non-Clustered Index)
+## Índice No Agrupado (Non-Clustered Index)
 
 **Organización lógica**: Un índice no agrupado no altera el orden físico de los datos en la tabla. En su lugar, crea una estructura de datos independiente y separada de la tabla principal.
 
@@ -234,7 +234,8 @@ WHERE fecha_reserva BETWEEN '2022-03-14' AND '2024-11-07'
 - Segundo Intento 2051ms/2,051seg
 - Tercer Intento 2089ms/2,089seg
 
-*Insertar imagen*
+<img width="1030" height="270" alt="sin_indice_1" src="https://github.com/user-attachments/assets/c6a99bcb-2095-4660-a3ac-09f1340a06da" />
+
 
 **Script 2:**
 ```sql
@@ -248,7 +249,8 @@ AND cant_personas BETWEEN '2' AND '9'
 - Segundo Intento 1715 ms/1,715 seg
 - Tercer Intento 1558 ms/1,558 seg
 
-*Insertar imagen*
+<img width="1033" height="271" alt="sin_indice_2" src="https://github.com/user-attachments/assets/d49ca053-f649-4652-be3a-44508d51e31d" />
+
 
 **Script 3:**
 ```sql
@@ -263,7 +265,8 @@ AND dni_cliente BETWEEN '11000000' AND '15000000'
 - Segundo Intento 1501 ms/1,501 seg
 - Tercer Intento 1551 ms/1,551 seg
 
-*Insertar imagen*
+<img width="1056" height="282" alt="sin_indice_3" src="https://github.com/user-attachments/assets/6937425c-1133-437e-8c36-93d9821f720e" />
+
 
 Luego se crea un Indice Clustered sobre la columna fecha_reserva con el siguiente comando:
 
@@ -290,7 +293,8 @@ WHERE fecha_reserva BETWEEN '2022-03-14' AND '2024-11-07'
 - Segundo Intento 2006 ms/2,006 seg
 - Tercer Intento 2001 ms/2,001 seg
 
-*Insertar imagen*
+<img width="1030" height="266" alt="con_indice_1" src="https://github.com/user-attachments/assets/9b61071a-a737-4c84-bbaa-ff021f9a9642" />
+
 
 **Script 2 con índice:**
 ```sql
@@ -304,7 +308,8 @@ AND cant_personas BETWEEN '2' AND '9'
 - Segundo Intento 1669 ms/1,669 seg
 - Tercer Intento 1668 ms/1,668 seg
 
-*Insertar imagen*
+<img width="1007" height="262" alt="con_indice_2" src="https://github.com/user-attachments/assets/8a48f01b-3bc0-4fd8-8bee-f9bc3d1dcd51" />
+
 
 **Script 3 con índice:**
 ```sql
@@ -319,7 +324,8 @@ AND dni_cliente BETWEEN '11000000' AND '15000000'
 - Segundo Intento 1400 ms/1,400 seg
 - Tercer Intento 1398 ms/1,398 seg
 
-*Insertar imagen*
+<img width="1016" height="265" alt="con_indice_3" src="https://github.com/user-attachments/assets/b17dcc14-6017-4373-bf9a-959d283399fe" />
+
 
 Se elimina nuevamente el índice en la tabla reserva:
 
@@ -352,7 +358,8 @@ WHERE fecha_reserva BETWEEN '2022-03-14' AND '2024-11-07'
 - Segundo Intento 2010 ms/2,010 seg
 - Tercer Intento 2018 ms/2,018 seg
 
-*Insertar imagen*
+<img width="1016" height="256" alt="con_indice_columnas_añadidas_1" src="https://github.com/user-attachments/assets/0ad6d6d8-69f9-4c72-92bb-9dc69ed74bb3" />
+
 
 **Script 2 con índice compuesto:**
 ```sql
@@ -366,7 +373,8 @@ AND cant_personas BETWEEN '2' AND '9'
 - Segundo Intento 1647 ms/1,647 seg
 - Tercer Intento 1656 ms./1,656 seg
 
-*Insertar imagen*
+<img width="1031" height="272" alt="con_indice_columnas_añadidas_2" src="https://github.com/user-attachments/assets/23212e99-c341-416d-b840-0a0126a36abd" />
+
 
 **Script 3 con índice compuesto:**
 ```sql
@@ -381,7 +389,8 @@ AND dni_cliente BETWEEN '11000000' AND '15000000'
 - Segundo Intento 1385 ms/1,385 seg
 - Tercer Intento 1406 ms/1,406 seg
 
-*Insertar imagen*
+<img width="1013" height="268" alt="con_indice_columnas_añadidas_3" src="https://github.com/user-attachments/assets/1e46b4c8-d2a0-4ced-a314-0d14f1bced92" />
+
 
 ## Conclusión
 
@@ -390,5 +399,8 @@ Luego de realizar todas las pruebas anteriormente dichas, podemos observar una m
 
 ## Bibliografia
 -Microsoft(1 de Octubre de 2025). Guía de diseño y arquitectura de índices.Microsoft Learn. Recuperado el 10 de Noviembre de 2025 desde: https://learn.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17#hash_index
+
 -Excel y Mas(2015, 28 de Junio). Creación de Indices | Curso de SQL Server #12[Video]. Youtube. https://www.youtube.com/watch?v=y1TxR53RlYU
+
 -Greg Robidoux(5 de Junio de 2025).Index Scans and Table Scans. MSSQLTips. Recuperado el 11 de Noviembre de 2025 desde: https://www.mssqltips.com/tutorial/index-scans-and-table-scans/
+
