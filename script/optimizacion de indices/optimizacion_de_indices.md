@@ -394,7 +394,7 @@ AND dni_cliente BETWEEN '11000000' AND '15000000'
 
 ## Conclusión
 
-Luego de realizar todas las pruebas anteriormente dichas, podemos observar una mejora en el tiempo de respuesta de las consultas sobre la tabla reserva al aplicar los índices en la columna fecha. Gracias a la herramienta de Plan de Ejecución de SQL Server, podemos ver una mejora de casi el 50% en las consultas cuando la tabla posee índice respecto a cuando no lo posee; esta mejora, que en este caso parece mínima, crecerá exponencialmente de acuerdo al flujo de datos con el que se trabaje. Por ende, podemos decir que los índices y su buena aplicación son fundamentales para el buen funcionamiento de toda Base de Datos y la optimización de las consultas sobre esta misma.
+Luego de realizar todas las pruebas anteriormente dichas, podemos observar una mejora en el tiempo de respuesta de las consultas sobre la tabla reserva al aplicar los índices en la columna fecha. Gracias a la herramienta de Plan de Ejecución de SQL Server, podemos ver una mejora de casi el 50% en las consultas cuando la tabla posee índice respecto a cuando no lo posee, ademas, se puede ver como el plan de ejecucion paso de Table Scan(Leer toda la tabla) a Index Seek(Acceso Directo por Indice) esta mejora, que en este caso parece mínima, crecerá exponencialmente de acuerdo al flujo de datos con el que se trabaje. Por ende, podemos decir que los índices y su buena aplicación son fundamentales para el buen funcionamiento de toda Base de Datos y la optimización de las consultas sobre esta misma.
 
 
 ## Bibliografia
@@ -403,4 +403,5 @@ Luego de realizar todas las pruebas anteriormente dichas, podemos observar una m
 -Excel y Mas(2015, 28 de Junio). Creación de Indices | Curso de SQL Server #12[Video]. Youtube. https://www.youtube.com/watch?v=y1TxR53RlYU
 
 -Greg Robidoux(5 de Junio de 2025).Index Scans and Table Scans. MSSQLTips. Recuperado el 11 de Noviembre de 2025 desde: https://www.mssqltips.com/tutorial/index-scans-and-table-scans/
+
 
