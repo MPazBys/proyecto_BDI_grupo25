@@ -393,8 +393,8 @@ La principal distinción es la organización y el enfoque:
 #### Escenarios Secundarios (Análisis Operativo)
 - Un caso de uso secundario, pero muy importante, es el análisis operativo en tiempo real.
 - Al usar un índice columnar no agrupado sobre una tabla tradicional (Rowstore), se permite que:
-  - * La carga de trabajo transaccional (OLTP) utiliza el índice de fila subyacente.
-  - * Las consultas analíticas de alto rendimiento utilizan simultáneamente el índice columnar.
+  - La carga de trabajo transaccional (OLTP) utiliza el índice de fila subyacente.
+  - Las consultas analíticas de alto rendimiento utilizan simultáneamente el índice columnar.
 - Esto elimina la necesidad de mover los datos a un sistema separado para el análisis.
 
 ### 4. Tipos de Índices Columnares
