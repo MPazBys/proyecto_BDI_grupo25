@@ -404,10 +404,17 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 ## Referencias Bibliográficas
 **Fuente Principal (Documentación Oficial de Microsoft):**
 
-Microsoft. (2024). **Procedimientos almacenados (Motor de base de datos).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/stored-procedures-database-engine 
+- Microsoft. (2024). **Procedimientos almacenados (Motor de base de datos).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/stored-procedures-database-engine 
 
-Microsoft. (2024). **Funciones definidas por el usuario.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/user-defined-functions/user-defined-functions 
+- Microsoft. (2024). **Funciones definidas por el usuario.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/user-defined-functions/user-defined-functions 
 
-Microsoft. (2024). **CREATE PROCEDURE (Transact-SQL).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/t-sql/statements/create-procedure-transact-sql
+- Microsoft. (2024). **CREATE PROCEDURE (Transact-SQL).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/t-sql/statements/create-procedure-transact-sql
 
-Microsoft. (2024). **Índices de almacén de columnas: información general.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
+- Microsoft. (2024). **Índices de almacén de columnas: información general.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
+
+- Microsoft(1 de Octubre de 2025). Guía de diseño y arquitectura de índices.Microsoft Learn. Recuperado el 10 de Noviembre de 2025 desde: https://learn.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17#hash_index
+
+- Excel y Mas(2015, 28 de Junio). Creación de Indices | Curso de SQL Server #12[Video]. Youtube. https://www.youtube.com/watch?v=y1TxR53RlYU
+
+- Greg Robidoux(5 de Junio de 2025).Index Scans and Table Scans. MSSQLTips. Recuperado el 11 de Noviembre de 2025 desde: https://www.mssqltips.com/tutorial/index-scans-and-table-scans/
+
