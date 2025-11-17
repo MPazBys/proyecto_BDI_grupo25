@@ -68,6 +68,143 @@ El alcance del sistema está definido por las entidades y relaciones del esquema
 
 ## TEMA 01: PROCEDIMIENTOS Y FUNCIONES ALMACENADAS
 
+### 1. Introduccion y Beneficios: 
+Un Procedimiento Almacenado (SP) en SQL Server es un objeto de base de datos que agrupa una o más instrucciones Transact-SQL (el lenguaje de SQL Server) 
+en un solo plan de ejecución. También puede ser una referencia a un método CLR de .NET Framework.
+
+Se asemejan a las construcciones de otros lenguajes de programación, ya que están diseñados para:
+  - Aceptar parámetros de entrada (ej: @dni) y devolver múltiples valores en forma de parámetros de salida (ej: @id_creado).
+  - Contener lógica de programación que realice operaciones complejas en la base de datos, incluyendo la llamada a otros procedimientos.
+  - Devolver un valor de estado a la aplicación que lo llamó, para indicar si la operación tuvo éxito o si se produjo un error (y por qué).
+
+#### Beneficios (Eficiencia y Seguridad)
+- Rendimiento y Reducción de Tráfico: Las operaciones se ejecutan como un solo lote. Esto reduce el tráfico de red, ya que la aplicación solo envía
+  una llamada EXEC en lugar de múltiples líneas de código SQL. El plan de ejecución se guarda en caché, acelerando ejecuciones futuras.
+- Seguridad (Encapsulación): Permiten conceder permiso a un usuario para ejecutar el procedimiento (ej: GRANT EXECUTE ON sp_InsertarPersona) sin darle
+  permiso directo para escribir (INSERT) en las tablas. Esto previene ataques de inyección SQL.
+- Mantenimiento (Reutilización): Encapsulan la lógica de negocio. Si la regla para insertar un registro cambia, solo se modifica el SP, y no todas las
+  aplicaciones que lo consumen.
+
+### 2. Gestión y Ciclo de Vida de un Procedimiento Almacenado
+
+Basado en la documentación de Microsoft, el ciclo de vida y la gestión de un procedimiento almacenado (SP) cubre las siguientes tareas:
+  - Creación de un procedimiento almacenado : Es el proceso inicial donde se define el SP por primera vez. Se utiliza el comando CREATE PROCEDURE.
+    Aquí se establece su nombre, los parámetros que recibirá y las instrucciones T-SQL que ejecutará.
+  - Modificar un procedimiento almacenado: Se refiere a la actualización de un SP que ya existe. Se utiliza el comando ALTER PROCEDURE. Esto permite
+    cambiar la lógica interna, añadir o quitar parámetros sin tener que borrarlo y volverlo a crear.
+  - Eliminación de un procedimiento almacenado: Es el proceso de borrar permanentemente el SP de la base de datos. Se utiliza el comando DROP PROCEDURE.
+  - Ejecución de un procedimiento almacenado: Es la acción de "llamar" o invocar al SP para que realice su tarea. Se utiliza el comando EXECUTE
+    (o su abreviatura EXEC) seguido del nombre del SP y sus parámetros.
+  - Conceder permisos para un procedimiento almacenado: Se refiere a la gestión de la seguridad. Es el acto de dar permiso (GRANT) a un usuario o rol
+    para que pueda ejecutar un SP, sin necesidad de darle permisos directos sobre las tablas que este modifica.
+  - Devolución de datos de un procedimiento almacenado: Describe las diferentes formas en que un SP puede devolver información a la aplicación que lo llamó.
+    Esto puede ser a través de un conjunto de resultados (un SELECT), un parámetro de salida (OUTPUT) o un valor de estado (un número que indica éxito o error).
+  - Volver a compilar un procedimiento almacenado: Es una tarea de optimización. Cuando un SP se ejecuta por primera vez, SQL Server crea un "plan de ejecución" y lo guarda.
+    Recompilarlo (sp_recompile) fuerza al sistema a crear un nuevo plan, lo cual es útil si las tablas han cambiado mucho y el plan antiguo ya no es eficiente.
+  - Cambiar el nombre de un procedimiento almacenado: Es el comando (sp_rename) que se utiliza para cambiar el nombre de un SP existente.
+  - Visualización de la definición de un procedimiento almacenado: Es la forma de ver el código fuente (las instrucciones T-SQL) de un SP que ya está creado,
+    usualmente usando el comando sp_helptext.
+  - Ver las dependencias de un procedimiento almacenado: Permite analizar qué objetos (como tablas o vistas) utiliza el SP, o qué otros procedimientos llaman a este SP.
+    Es fundamental para el mantenimiento, para saber que si se modifica una tabla, no se "romperá" un SP. 
+
+### 3. Tipos de Procedimientos Almacenados
+
+#### 1. Definidos por el Usuario (User-defined)
+Estos son los procedimientos estándar que los desarrolladores crean y almacenan dentro de una base de datos específica (definida por el usuario). Son el tipo 
+principal que usarás en tu proyecto. Pueden ser escritos en Transact-SQL o hacer referencia a un método CLR (.NET Framework).
+
+    Ejemplo (T-SQL)
+    -- El procedimiento que estamos creando para el proyecto
+    CREATE PROCEDURE sp_InsertarPersona
+        @dni INT,
+        @nombre VARCHAR(100)
+    AS
+    BEGIN
+        INSERT INTO persona (dni, nombre)
+        VALUES (@dni, @nombre);
+    END
+#### 2. Temporales (Temporary)
+Son una forma especial de procedimientos definidos por el usuario, pero se almacenan en la base de datos temporal (tempdb) en lugar de en la tuya. Se eliminan automáticamente
+  - Temporal Local (#):
+    El nombre comienza con un solo #.
+    Solo es visible para la conexión del usuario que lo creó.
+    Se elimina automáticamente cuando ese usuario cierra la conexión.
+    Ejemplo: CREATE PROC #MiReporteTemporal ...
+
+  - Temporal Global (##):
+    El nombre comienza con dos ##.
+    Es visible para cualquier usuario después de su creación.
+    Se elimina cuando la última sesión que lo estaba usando se cierra.
+    Ejemplo: CREATE PROC ##ConfiguracionGlobal ...
+
+#### 3. del Sistema (System)
+Estos son los procedimientos preinstalados que vienen con el Motor de Base de Datos. SQL Server los usa para administrar y reportar sobre el estado del sistema.
+  - Están almacenados en la base de datos Resource pero aparecen lógicamente en el esquema sys de todas las bases de datos.
+  - Comienzan con el prefijo sp_. (Se recomienda no usar sp_ para tus propios procedimientos).
+      Ejemplo:
+      -- Muestra información sobre el objeto 'persona'
+      EXEC sp_help 'persona';
+      -- Muestra las conexiones activas en el servidor
+      EXEC sp_who;
+
+#### 4. Extendidos Definidos por el Usuario (Extended)
+Estos procedimientos permiten a SQL Server ejecutar rutinas externas escritas en lenguajes como C. Son bibliotecas DLL que el servidor carga y ejecuta dinámicamente.
+  - Usan el prefijo xp_: 
+    -- (A menudo deshabilitado por seguridad)
+    -- Ejecuta un comando en el sistema operativo del servidor
+    EXEC xp_cmdshell 'DIR C:';
+
+### 3. Funciones Definidas por el Usuario (UDF)
+Una función es una rutina que acepta parámetros, realiza una acción (generalmente un cálculo) y siempre debe devolver un valor.
+
+#### Tipos Principales
+  - Funciones Escalares: Devuelven un único valor (ej: un número, texto o fecha). Son ideales para cálculos repetitivos.
+      Ejemplo: fn_CalcularEdad(@fecha_nacimiento)
+  - Funciones con Valores de Tabla (TVF): Devuelven una tabla completa (un conjunto de resultados). Son como "vistas con parámetros".
+      Ejemplo: fn_ReservasDelCliente(@dni)
+#### Uso Principal
+  La gran ventaja de las funciones es que se pueden usar directamente dentro de un SELECT o WHERE, algo que los procedimientos no pueden hacer.
+      Ejemplo SQL
+      -- Se usa como una columna más
+      SELECT
+          nombre,
+          dbo.fn_CalcularEdad(fecha_nacimiento) AS Edad
+      FROM
+          persona;
+
+### 4. Aplicación en Operaciones CRUD
+Como vimos en la lista anterior, las tareas fundamentales son Crear, Modificar y Eliminar. A continuación, aplicaremos estos conceptos para implementar 
+las operaciones CRUD (Crear, Leer, Modificar, Borrar) en nuestro proyecto.
+
+Los procedimientos almacenados son el mecanismo ideal para encapsular y centralizar esta lógica de negocio. Actúan como una "API" segura para la base de datos.
+  - Crear (INSERT): Se implementa un procedimiento (ej: sp_InsertarPersona) que recibe todos los campos de la nueva fila como parámetros. Esto asegura que
+    solo se inserten datos válidos y de la forma correcta, ocultando la lógica del INSERT a la aplicación.
+  - Modificar (UPDATE): Se diseña un procedimiento (ej: sp_ModificarPersona) que recibe la clave primaria (ej: @dni) para identificar el registro, junto con
+    los nuevos valores que se deben actualizar
+  - Borrar (DELETE): Se crea un procedimiento (ej: sp_BorrarPersona) que solo acepta la clave primaria (@dni). Esto previene eliminaciones accidentales o
+    maliciosas y permite añadir lógica de borrado (como un borrado lógico) en un futuro.
+  - Leer (SELECT): Aunque a menudo se hacen con vistas o funciones, los SPs también son potentes para devolver conjuntos de resultados complejos, permitiendo
+    filtros y lógica que una vista simple no puede manejar.
+
+#### Capacidades Avanzadas (Integridad y Errores)
+Más allá del CRUD básico, la verdadera potencia de los procedimientos almacenados radica en su capacidad para:
+  - Manejar Transacciones: Agrupar múltiples comandos (ej: un INSERT en pagos y un UPDATE en reserva) en una sola unidad de trabajo "todo o nada". Si una parte
+    falla, todo se revierte (ROLLBACK), garantizando la integridad de los datos.
+  - Gestión Compleja de Errores: Implementar bloques TRY...CATCH para capturar errores de SQL durante la ejecución. Esto permite devolver mensajes de error claros
+    y personalizados a la aplicación, en lugar de mensajes crípticos del sistema.
+
+### 5. Diferencias Clave (Procedimiento vs. Función)
+
+| Característica | Procedimiento Almacenado (SP) |  Función (UDF)  |
+|----------------|-------------------------------|-----------------|
+| Propósito Principal | Ejecutar acciones (modificar datos, gestionar procesos). | Realizar cálculos y devolver un valor. | 
+| Valor de Retorno | No es obligatorio. Puede devolver 0 o más conjuntos de resultados. | Obligatorio. Debe devolver un solo valor (escalar o tabla). | 
+| Modificar Datos (CRUD) | Sí. Es su uso ideal (INSERT, UPDATE, DELETE). | No. No pueden "realizar acciones que modifiquen el estado de la base de datos". | 
+| Cómo se llama | Con EXECUTE o EXEC. | Directamente en un SELECT o WHERE. | 
+| Uso en SELECT | No se puede llamar dentro de un SELECT. | Sí. Es su principal ventaja. | 
+| Manejo de Errores | Soporta TRY...CATCH y transacciones completas | Limitado. No soporta TRY...CATCH. | 
+| Llamadas | Puede llamar a funciones. | No puede llamar a procedimientos almacenados. | 
+
 ## TEMA 02: TRANSACCIONES
 
 ## TEMA 03: OPTIMIZACIÓN DE ÍNDICES
