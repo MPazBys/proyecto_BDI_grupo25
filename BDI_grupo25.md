@@ -414,9 +414,69 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 - **Análisis en Tiempo Real:** Permite realizar análisis de alto rendimiento directamente sobre las cargas de trabajo transaccionales activas sin necesidad de mover los datos a un Data Warehouse separado (usando el índice no agrupado).
 
 # CAPÍTULO III
-explicar también brevemente, la forma de trabajo y las herramientas que utilizaron en el grupo.
+## METODOLOGÍA SEGUIDA
+En este capítulo se describe el plan de acción, las fases de desarrollo y el conjunto de herramientas e instrumentos utilizados para la realización del Trabajo Práctico.
+
+### a. Descripción de cómo se realizó el Trabajo Práctico
+La metodología de trabajo se diseñó para garantizar un enfoque estructurado que abarcara el diseño conceptual, la implementación técnica y la investigación especializada de los temas de SQL Server requeridos.
+
+#### 1. Fase de Diseño y Validación del Modelo
+El punto de partida fue la definición del modelo relacional de la base de datos. Esta etapa fue crucial para establecer la estructura lógica y las relaciones entre las entidades que el trabajo requería.
+
+#### 2. Retroalimentación y Ajuste
+Una vez esbozado el modelo, se gestionó una sesión de retroalimentación con uno de los profesores. Este paso permitió validar la coherencia del diseño y ajustar el modelo relacional para optimizar su estructura y garantizar su alineación con las buenas prácticas de bases de datos.
+
+#### 3. Implementación de la Base de Datos
+Tras la validación, se procedió a la implementación física del modelo en el entorno de desarrollo. Esta fase incluyó:
+
+- La creación de tablas en SQL Server utilizando sentencias Transact-SQL.
+
+- La carga de un lote de datos (data batch) para poblar las tablas, lo que permitió realizar pruebas y desarrollar los objetos de base de datos sobre una base de datos operativa y representativa.
+
+#### 4. Investigación y Desarrollo por Módulos
+El esfuerzo se distribuyó entre los miembros del grupo mediante una división temática, asignando a cada integrante la investigación profunda de uno de los cuatro temas centrales (ejemplo: procedimientos almacenados, índices, transacciones, funciones). Esto garantizó una cobertura especializada y un estudio detallado de cada segmento.
+
+El desarrollo final consistió en la aplicación práctica de los conocimientos adquiridos a la base de datos implementada, incluyendo la redacción de los fundamentos teóricos y la demostración de la funcionalidad en **SQL Server**.
+
+### b. Herramientas (Instrumentos y procedimientos)
+Los instrumentos y procedimientos utilizados fueron clave tanto para la recolección como para el tratamiento de la información técnica.
+
+#### 1. Herramientas de Implementación (Instrumentos)
+- **Sistema de Gestión de Base de Datos:** El software principal utilizado para el desarrollo y las pruebas fue SQL Server.
+
+- **Lenguaje de Programación:** Las actividades de creación de tablas, inserción de datos, y desarrollo de objetos (como procedimientos almacenados) se realizaron mediante el lenguaje Transact-SQL (T-SQL).
+
+#### 2. Procedimientos de Recolección de Información
+La obtención de datos y conocimiento técnico se basó en una revisión bibliográfica y documental exhaustiva realizada a través de Internet.
+
+Las fuentes consultadas se clasifican de la siguiente manera:
+
+- **Documentación Oficial de Microsoft (Fuente Primaria):** Se priorizó la consulta de Microsoft Learn para obtener información precisa y actualizada sobre el motor de base de datos, sintaxis T-SQL y arquitectura de índices. Esto incluyó documentación sobre:
+
+-- Procedimientos Almacenados (CREATE PROCEDURE).
+
+-- Funciones Definidas por el Usuario.
+
+-- Índices de Almacén de Columnas y Guía de Diseño de Índices.
+
+-- Elementos del Lenguaje de Transacciones (BEGIN TRANSACTION y TRY...CATCH).
+
+- **Artículos y Tutoriales Especializados:** Se emplearon recursos técnicos de sitios web especializados (ej. MSSQLTips) para la comprensión de conceptos avanzados como Index Scans y Table Scans.
+
+- **Recursos Audiovisuales (Videos de YouTube):** Se utilizaron como apoyo didáctico y conceptual para clarificar temas complejos, como el proceso de creación de índices y las propiedades ACID (Atomicidad, Consistencia, Aislamiento y Durabilidad).
  
 # CAPÍTULO IV
+
+## DESARROLLO DE LOS TEMAS APLICADOS AL PROYECTO
+
+> ![Procedimientos y Funciones Almacenadas](script/Tema01_ProcedimientosYFuncionesAlmacenadas)
+
+> ![Transacciones](script/Tema02_Transacciones)
+
+> ![Optimización de Índices](script/Tema03_OptimizacionDeIndices)
+
+> ![Índices Columnares](script/Tema04_Indices_Columnares)
+
 ## MODELO RELACIONAL
 
 > Modelo Relacional: ![Modelo Relacional](doc/diagrama_BD.png)
@@ -518,13 +578,12 @@ explicar también brevemente, la forma de trabajo y las herramientas que utiliza
 | id_metodo | INT | **FK** | **metodo_pago(id_metodo)** | Método de pago utilizado. |
 | id_reserva | INT | **PK, FK** | **reserva(id_reserva)** | Reserva asociada al pago. |
 
-## Analisis Final
-
 
 # CAPÍTULO V
 ## CONCLUSIÓN
 Hemos concluido en que, nuestro trabajo en el Proyecto Restaurant 2025 nos permitió comprender que la solidez de un sistema no solo reside en su esquema relacional, sino en la integridad de su lógica de negocio. Logramos modularizar las operaciones diarias mediante Procedimientos Almacenados, estandarizando el acceso a los datos. La implementación rigurosa de Transacciones ACID con manejo de errores TRY/CATCH fue crucial, enseñándonos a garantizar la fiabilidad del sistema en operaciones críticas como reservas y pagos. Sin embargo, la lección más significativa provino de la fase de optimización: al realizar el benchmarking, comprobamos que una gestión adecuada de los índices (tanto Agrupados simples como compuestos) tiene un impacto directo en el tiempo de respuesta OLTP. Además, la introducción de Índices Columnares demostró una superioridad abrumadora para las consultas analíticas de agregación, confirmando la importancia de seleccionar la estrategia de indexación correcta para cada tipo de carga de trabajo. Concluimos que hemos entregado una base de datos funcional, segura y con un rendimiento validado para la operación a gran escala.
 
+# CAPÍTULO VI
 ## Referencias Bibliográficas
 **Fuente Principal (Documentación Oficial de Microsoft):**
 
