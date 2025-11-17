@@ -404,10 +404,10 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 ## Referencias Bibliográficas
 **Fuente Principal (Documentación Oficial de Microsoft):**
 
-Microsoft. (2024). **Procedimientos almacenados (Motor de base de datos).** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/stored-procedures-database-engine 
+Microsoft. (2024). **Procedimientos almacenados (Motor de base de datos).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/stored-procedures-database-engine 
 
-Microsoft. (2024). **Funciones definidas por el usuario.** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/relational-databases/user-defined-functions/user-defined-functions 
+Microsoft. (2024). **Funciones definidas por el usuario.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/user-defined-functions/user-defined-functions 
 
-Microsoft. (2024). **CREATE PROCEDURE (Transact-SQL).** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/t-sql/statements/create-procedure-transact-sql
+Microsoft. (2024). **CREATE PROCEDURE (Transact-SQL).** Microsoft Learn. https://learn.microsoft.com/es-es/sql/t-sql/statements/create-procedure-transact-sql
 
-Microsoft. (2024). **Índices de almacén de columnas: información general** https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
+Microsoft. (2024). **Índices de almacén de columnas: información general.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
