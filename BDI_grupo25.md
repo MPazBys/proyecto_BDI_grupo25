@@ -469,13 +469,13 @@ Las fuentes consultadas se clasifican de la siguiente manera:
 
 ## DESARROLLO DE LOS TEMAS APLICADOS AL PROYECTO
 
-> ![Procedimientos y Funciones Almacenadas](script/Tema01_ProcedimientosYFuncionesAlmacenadas)
+> ![Procedimientos y Funciones Almacenadas](scripts/Tema01_ProcedimientosYFuncionesAlmacenadas)
 
-> ![Transacciones](script/Tema02_Transacciones)
+> ![Transacciones](scripts/Tema02_Transacciones)
 
-> ![Optimización de Índices](script/Tema03_OptimizacionDeIndices)
+> ![Optimización de Índices](scripts/Tema03_OptimizacionDeIndices)
 
-> ![Índices Columnares](script/Tema04_Indices_Columnares)
+> ![Índices Columnares](scripts/Tema04_Indices_Columnares)
 
 ## MODELO RELACIONAL
 
