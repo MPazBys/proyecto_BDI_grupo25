@@ -127,7 +127,7 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 # CAPÍTULO IV
 ## MODELO RELACIONAL
 
-> Modelo Relacional: ![Modelo Relacional](diagrama_BD.jpeg)
+> Modelo Relacional: ![Modelo Relacional](doc/diagrama_BD.jpeg)
 
 ## Diccionario De Datos
 
