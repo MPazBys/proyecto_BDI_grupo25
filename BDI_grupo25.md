@@ -215,7 +215,7 @@ Más allá del CRUD básico, la verdadera potencia de los procedimientos almacen
 ## TEMA 02: TRANSACCIONES
 
 ## TEMA 03: OPTIMIZACIÓN DE ÍNDICES
-# INTRODUCCION
+### INTRODUCCION
 
 En el ámbito de las bases de datos, crear índices eficaces es primordial para lograr un buen rendimiento de la base de datos, en especial si estamos tratando con grandes volúmenes de información. La ausencia de estos, la sobreindizacion o el mal diseño de los índices son los principales causantes de problemas de rendimiento de la base de datos.
 
@@ -225,7 +225,7 @@ Un índice es una estructura en disco o en memoria asociada a una tabla o vista 
 
 En este proyecto estaremos usando los índices agrupados o también conocidos como clustered pero también abordaremos de manera teorica y explicativa los non clustered.
 
-## Índice Agrupado (Clustered Index)
+### Índice Agrupado (Clustered Index)
 
 **Organización física**: Este tipo de índice define y almacena el orden físico real de las filas de datos en el disco. Los datos de la tabla se ordenan y almacenan en el disco exactamente en la misma secuencia que el índice.
 
@@ -233,7 +233,7 @@ En este proyecto estaremos usando los índices agrupados o también conocidos co
 
 **Analogía**: Es como ordenar un archivo de documentos por fecha de manera cronológica; los papeles mismos están físicamente en ese orden.
 
-## Índice No Agrupado (Non-Clustered Index)
+### Índice No Agrupado (Non-Clustered Index)
 
 **Organización lógica**: Un índice no agrupado no altera el orden físico de los datos en la tabla. En su lugar, crea una estructura de datos independiente y separada de la tabla principal.
 
