@@ -127,6 +127,8 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 # CAPÍTULO IV
 ## MODELO RELACIONAL
 
+> Modelo Relacional: ![Modelo Relacional](diagrama_BD.jpeg)
+
 ## Diccionario De Datos
 
 ### Tabla: Cliente
@@ -246,3 +248,7 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 |---------|-------------|--------|-------------------------|-------------|
 | ID_reserva | INT | PK, FK | Reserva (ID_reserva) | Reserva asociada al evento especial. |
 | ID_evento | INT | PK, FK | EventoEspecial (ID_evento) | Evento especial al que corresponde la reserva. |
+
+
+# CAPÍTULO V
+## CONCLUSIÓN
