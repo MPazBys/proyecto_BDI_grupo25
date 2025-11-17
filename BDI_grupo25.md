@@ -453,13 +453,13 @@ Las fuentes consultadas se clasifican de la siguiente manera:
 
 - **Documentación Oficial de Microsoft (Fuente Primaria):** Se priorizó la consulta de Microsoft Learn para obtener información precisa y actualizada sobre el motor de base de datos, sintaxis T-SQL y arquitectura de índices. Esto incluyó documentación sobre:
 
--- Procedimientos Almacenados (CREATE PROCEDURE).
+  - Procedimientos Almacenados (CREATE PROCEDURE).
 
--- Funciones Definidas por el Usuario.
-
--- Índices de Almacén de Columnas y Guía de Diseño de Índices.
-
--- Elementos del Lenguaje de Transacciones (BEGIN TRANSACTION y TRY...CATCH).
+  - Funciones Definidas por el Usuario.
+    
+  - Índices de Almacén de Columnas y Guía de Diseño de Índices.
+  
+  - Elementos del Lenguaje de Transacciones (BEGIN TRANSACTION y TRY...CATCH).
 
 - **Artículos y Tutoriales Especializados:** Se emplearon recursos técnicos de sitios web especializados (ej. MSSQLTips) para la comprensión de conceptos avanzados como Index Scans y Table Scans.
 
