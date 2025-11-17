@@ -24,17 +24,17 @@ Lo que hacemos es decirle al motor que cree un índice llamado “CCI_reserva_co
 
 ## Proseguiremos con la realización de las pruebas 
 
-> Acceder a la imagen de la [Prueba A](prueba A.png)
+> Acceder a la imagen de la ![Prueba A](prueba A.png)
 
-> Acceder a la imagen de la [Prueba B](prueba B.png)
+> Acceder a la imagen de la ![Prueba B](prueba B.png)
 
-> Acceder a la imagen de la [Prueba C](prueba C.png)
+> Acceder a la imagen de la ![Prueba C](prueba C.png)
 
-> Acceder a la imagen de la [Prueba D](prueba D.png)
+> Acceder a la imagen de la ![Prueba D](prueba D.png)
 
-> Acceder a la imagen de la [Prueba E](prueba E.png)
+> Acceder a la imagen de la ![Prueba E](prueba E.png)
 
-> Acceder a la imagen de la [Prueba F](prueba F.png)
+> Acceder a la imagen de la ![Prueba F](prueba F.png)
 
 
 ## Conclusiones Particulares del Tema
