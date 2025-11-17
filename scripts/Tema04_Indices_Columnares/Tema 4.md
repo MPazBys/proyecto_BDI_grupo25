@@ -24,17 +24,17 @@ Lo que hacemos es decirle al motor que cree un índice llamado “CCI_reserva_co
 
 ## Proseguiremos con la realización de las pruebas 
 
-> * Prueba A: ![Plan de Ejecución - Prueba A](prueba_A.png)
+> * Prueba A: ![Plan de Ejecución - Prueba A](./prueba_A.png)
 
-> * Prueba B: ![Plan de Ejecución - Prueba B](prueba_B.png)
+> * Prueba B: ![Plan de Ejecución - Prueba B](./prueba_B.png)
 
-> * Prueba C: ![Plan de Ejecución - Prueba C](prueba_C.png)
+> * Prueba C: ![Plan de Ejecución - Prueba C](./prueba_C.png)
 
-> * Prueba D: ![Plan de Ejecución - Prueba D](prueba_D.png)
+> * Prueba D: ![Plan de Ejecución - Prueba D](./prueba_D.png)
 
-> * Prueba E: ![Plan de Ejecución - Prueba E](prueba_E.png)
+> * Prueba E: ![Plan de Ejecución - Prueba E](./prueba_E.png)
 
-> * Prueba F: ![Plan de Ejecución - Prueba F](prueba_F.png)
+> * Prueba F: ![Plan de Ejecución - Prueba F](./prueba_F.png)
 
 
 ## Conclusiones Particulares del Tema
