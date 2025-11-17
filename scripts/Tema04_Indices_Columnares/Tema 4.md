@@ -40,3 +40,8 @@ Lo que hacemos es decirle al motor que cree un índice llamado “CCI_reserva_co
 ## Conclusiones Particulares del Tema
 
 Podemos afirmar que para consultas en donde no tengamos que buscar muchos registros, el porcentaje de tiempo de respuesta es casi igual en ambos tipos de índices (Prueba A), pero cuando involucramos una cantidad considerable de registros con operaciones de agregación (AVG, COUNT, SUM, etc), el uso del índice columnar (Columnstore) es considerablemente superior que la forma tradicional (Rowstore). Por ende, en grandes sistemas en donde sea necesario el uso de consultas y subconsultas con millones de registros, es recomendable la utilización de Columnstore, sobre todo si la principal prioridad de estos es el análisis de los mismos.
+
+
+## Bibliografia
+
+https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
