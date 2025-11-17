@@ -195,9 +195,9 @@ Los procedimientos almacenados son el mecanismo ideal para encapsular y centrali
 
 #### Capacidades Avanzadas (Integridad y Errores)
 Más allá del CRUD básico, la verdadera potencia de los procedimientos almacenados radica en su capacidad para:
-  - Manejar Transacciones: Agrupar múltiples comandos (ej: un INSERT en pagos y un UPDATE en reserva) en una sola unidad de trabajo "todo o nada". Si una parte
+  - **Manejar Transacciones:** Agrupar múltiples comandos (ej: un INSERT en pagos y un UPDATE en reserva) en una sola unidad de trabajo "todo o nada". Si una parte
     falla, todo se revierte (ROLLBACK), garantizando la integridad de los datos.
-  - Gestión Compleja de Errores: Implementar bloques TRY...CATCH para capturar errores de SQL durante la ejecución. Esto permite devolver mensajes de error claros
+  - **Gestión Compleja de Errores:** Implementar bloques TRY...CATCH para capturar errores de SQL durante la ejecución. Esto permite devolver mensajes de error claros
     y personalizados a la aplicación, en lugar de mensajes crípticos del sistema.
 
 ### 5. Diferencias Clave (Procedimiento vs. Función)
