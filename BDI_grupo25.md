@@ -212,6 +212,15 @@ Más allá del CRUD básico, la verdadera potencia de los procedimientos almacen
 | Manejo de Errores | Soporta TRY...CATCH y transacciones completas | Limitado. No soporta TRY...CATCH. | 
 | Llamadas | Puede llamar a funciones. | No puede llamar a procedimientos almacenados. | 
 
+### Referencias Bibliográficas
+**Fuente Principal (Documentación Oficial de Microsoft):**
+
+Microsoft. (2024). **Procedimientos almacenados (Motor de base de datos).** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/relational-databases/stored-procedures/stored-procedures-database-engine 
+
+Microsoft. (2024). **Funciones definidas por el usuario.** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/relational-databases/user-defined-functions/user-defined-functions 
+
+Microsoft. (2024). **CREATE PROCEDURE (Transact-SQL).** Microsoft Learn. Recuperado de https://learn.microsoft.com/es-es/sql/t-sql/statements/create-procedure-transact-sql
+
 ## TEMA 02: TRANSACCIONES
 
 ## TEMA 03: OPTIMIZACIÓN DE ÍNDICES
@@ -396,6 +405,10 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 | id_evento | INT | PK | N/A | Identificador único del evento especial. |
 | nombre_evento | VARCHAR(30) | | N/A | Nombre del evento (ej: Navidad, Catering corporativo). |
 
+### Referencias Bibliográficas
+**Fuente Principal (Documentación Oficial de Microsoft):**
+
+**Índices de almacén de columnas: información general** https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
 
 # CAPÍTULO V
 ## CONCLUSIÓN
