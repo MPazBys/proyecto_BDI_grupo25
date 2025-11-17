@@ -5,6 +5,7 @@
 **Grupo: 25**
 
 ## Proyecto Base de Datos
+## Proyecto Restaurant 2025
 
 ### Alumnos:
 - **Bys, Paz** - DNI: 46.242.480
@@ -65,6 +66,7 @@ El alcance del sistema está definido por las entidades y relaciones del esquema
 
 # CAPÍTULO II
 ## ESTUDIO DE TRABAJO
+En este proyecto de estudio para el Proyecto Restaurant 2025, hemos diseñado e implementado una solución de base de datos integral que abarca desde la estructura relacional hasta la optimización avanzada. Comenzamos definiendo un esquema robusto (db_proyecto.sql) con restricciones de integridad referencial y reglas de negocio estrictas para entidades clave como persona, reserva y empleado. Para asegurar la fiabilidad operativa, desarrollamos un módulo transaccional (trasaction.sql) que gestiona procesos críticos, como la creación de reservas validando disponibilidad de mesas y horarios, los pagos y la asignación de roles, implementando bloques TRY/CATCH para garantizar la atomicidad y el manejo de errores. Asi mismo, modularizamos la lógica repetitiva mediante procedimientos almacenados para el mantenimiento de datos y funciones escalares para cálculos de negocio. Finalmente, nos hemos enfocado en el rendimiento: realizamos pruebas de estrés comparando tiempos de respuesta con y sin índices agrupados tradicionales, y exploramos tecnologías OLAP implementando índices columnares (Columnstore) en una tabla espejo, lo que nos permitió contrastar métricas de desempeño entre el almacenamiento por filas y por columnas para consultas de agregación masiva.
 
 ## TEMA 01: PROCEDIMIENTOS Y FUNCIONES ALMACENADAS
 
@@ -214,6 +216,122 @@ Más allá del CRUD básico, la verdadera potencia de los procedimientos almacen
 
 
 ## TEMA 02: TRANSACCIONES
+## Introducción
+***
+El sistema de gestión de bases de datos (**DBMS**) **SQL Server** está diseñado para albergar datos críticos en entornos empresariales, donde la **precisión** y la **confiabilidad** son imperativas. Dentro de esta arquitectura, el concepto de **transacción** no es meramente una funcionalidad, sino el mecanismo fundamental que garantiza la **integridad de los datos**.
+
+Esta investigación se centra en los cimientos teóricos (**ACID**), la implementación práctica en **Transact-SQL (T-SQL)** y los desafíos avanzados de **concurrencia** y **resiliencia** que enfrentan los arquitectos y desarrolladores.
+
+***
+## Fundamentos de la Gestión Transaccional y el Modelo ACID
+
+SQL Server es un sistema diseñado para albergar datos críticos donde la precisión y la confiabilidad son fundamentales. El concepto de transacción es el mecanismo principal para garantizar la integridad de los datos. Una transacción es una secuencia de operaciones ejecutadas como una **única unidad lógica de trabajo** ("todo o nada"). Su propósito crítico es mantener la **coherencia operativa** y la **consistencia** de los datos. Si una operación compleja falla, el sistema debe revertir todos los cambios (**rollback**) para evitar un estado inconsistente.
+
+### El Modelo Teórico: Propiedades ACID
+Para que cualquier base de datos relacional sea confiable, debe adherirse a los principios **ACID** (**Atomicidad**, **Consistencia**, **Aislamiento**, **Durabilidad**), que SQL Server sigue por defecto.
+
+| Propiedad (ACID) | Definición Operacional | Mecanismo Central en SQL Server |
+| :--- | :--- | :--- |
+| **Atomicidad (A)** | Garantía de "Todo o Nada". | `ROLLBACK TRANSACTION` y el Motor de Recuperación (Log). |
+| **Consistencia (C)** | Transición de estado válido a otro, respetando reglas. | Restricciones de Integridad (FKs, Checks) y Lógica de Negocio. |
+| **Aislamiento (I)** | Transacciones concurrentes invisibles entre sí. | Niveles de Aislamiento y Mecanismos de Bloqueo/Versionamiento. |
+| **Durabilidad (D)** | Cambios permanentes después del `COMMIT`, persistiendo a fallos. | Registro de Transacciones (**WAL**) y subsistema de almacenamiento. |
+
+***
+## El Desafío de la Durabilidad y la Implementación en T-SQL
+
+### El Impacto Crítico de la Durabilidad
+La **Durabilidad** se logra mediante el principio de **Write-Ahead Logging (WAL)**: la transacción se escribe en el **Log de Transacciones** antes de que los cambios se apliquen a los archivos de datos.
+
+La arquitectura del Log es crucial para el rendimiento. La proliferación de **Archivos de Registro Virtuales (VLFs)**, causada por un crecimiento automático (`FILEGROWTH`) frecuente, prolonga el tiempo de recuperación (**RTO**) y causa problemas de rendimiento. Un evento de crecimiento de archivo puede causar tipos de espera severos (`ASYNC_IO_COMPLETION`).
+
+> **Requisito Arquitectónico**: Pre-asignar el archivo de Log a su tamaño máximo y usar incrementos fijos grandes para limitar los VLFs y garantizar el rendimiento.
+
+### Implementación Práctica en T-SQL
+Aunque SQL Server opera por defecto en modo **autocommit**, los procesos complejos requieren transacciones explícitas.
+
+* **Estructura Base**:
+    1.  Inicio: `BEGIN { TRAN | TRANSACTION }`
+    2.  Finalización Exitosa: `COMMIT { TRAN | TRANSACTION }`
+    3.  Reversión Total: `ROLLBACK { TRAN | TRANSACTION }`
+* **Funcionalidades Avanzadas**:
+    * **Puntos de Guardado** (`SAVE TRANSACTION`): Permiten la reversión parcial dentro de una transacción principal.
+    * **Transacciones Marcadas** (`WITH MARK`): Herramienta crítica para la **Recuperación ante Desastres (DR)**, permitiendo restaurar a un punto consistente específico.
+* **Optimización Estratégica**: Las transacciones deben ser lo más **cortas y concisas** posible, minimizando el tiempo que se mantienen los bloqueos y evitando contención.
+
+***
+## Control de Concurrencia: Niveles de Aislamiento
+
+### El Desafío del Aislamiento (I)
+El **Aislamiento** busca equilibrar la consistencia de los datos con el rendimiento del sistema en un entorno multiusuario.
+
+Los **fallos de concurrencia** que los niveles de aislamiento buscan evitar son:
+* **Lecturas Sucias** (*Dirty Reads*): Leer datos modificados por otra transacción que aún no ha hecho `COMMIT`.
+* **Lecturas No Repetibles** (*Non-repeatable Reads*): Obtener resultados diferentes en la misma lectura porque otra transacción modificó y confirmó datos entre las lecturas.
+* **Fantasmas** (*Phantom Reads*): Aparición o desaparición de filas completas en un conjunto de resultados debido a inserciones/eliminaciones concurrentes.
+
+### Niveles de Aislamiento Estándar (Basados en Bloqueo)
+Los niveles, configurables con `SET TRANSACTION ISOLATION LEVEL`, usan bloqueos compartidos (**S-locks**) en las lecturas.
+
+| Nivel de Aislamiento | Lecturas Sucias | Lecturas No Repetibles | Fantasmas | Riesgo/Ventaja |
+| :--- | :--- | :--- | :--- | :--- |
+| **Read Uncommitted** | Permitido | Permitido | Permitido | Máxima concurrencia, datos no fiables. |
+| **Read Committed (RC)** | Evitado | Permitido | Permitido | **Nivel por defecto**. Evita el problema más grave. |
+| **Repeatable Read** | Evitado | Evitado | Permitido | Bloquea filas leídas. |
+| **Serializable** | Evitado | Evitado | Evitado | Máximo aislamiento. Menor concurrencia. |
+
+Para transacciones críticas que dependen de la validación de un conjunto de datos, el nivel debe ser elevado (a `REPEATABLE READ` o `SERIALIZABLE`).
+
+***
+## El Modelo de Versionamiento de Filas y Gestión de Deadlocks
+
+### El Aislamiento Basado en Versiones de Fila (Row Versioning)
+Es una alternativa superior al bloqueo que evita los tres problemas de concurrencia sin que las lecturas tomen bloqueos compartidos. Utiliza una **versión de los datos** (almacenada en `TempDB`) tal como existían al inicio de la transacción/sentencia.
+
+* **Niveles Clave**: `SNAPSHOT` y `READ COMMITTED SNAPSHOT ISOLATION (RCSI)`.
+* **Ventaja Estratégica**: Reduce drásticamente la contención entre lectores y escritores, mitigando una fuente principal de **deadlocks Lector-Escritor** y mejorando la escalabilidad.
+
+### Bloqueo vs. Deadlock
+* **Bloqueo (*Blocking*)**: Comportamiento normal donde una sesión espera pasivamente a que otra libere un recurso.
+* **Deadlock (*Bloqueo Mutuo*)**: Condición de **espera circular** donde dos o más transacciones se bloquean mutuamente.
+
+### Tipología y Resolución de Deadlocks
+* **Deadlocks Lector-Escritor**: Entre un `SELECT` y un `UPDATE`/`DELETE`. Mitigado con **RCSI**.
+* **Deadlocks Escritor-Escritor**: Entre transacciones que compiten por bloqueos exclusivos (**X-locks**).
+
+**Detección y Resolución Automática**:
+1.  El proceso `LOCK_MONITOR` escanea ciclos de espera.
+2.  Al detectarlo, selecciona una "**víctima del deadlock**" (generalmente la de menor costo de reversión).
+3.  La víctima es terminada forzosamente, se le aplica un `ROLLBACK`, y se devuelve el **Error 1205**.
+
+> **Implicación Crítica**: La aplicación cliente debe implementar una **lógica de reintento** (*retry logic*) al detectar el Error 1205, siendo la única solución para recuperarse funcionalmente de un deadlock de manera transparente.
+
+***
+## Programación Transaccional Robusta y Recomendaciones Estratégicas
+
+### Resiliencia del Código: Gestión de Errores
+La programación robusta exige el uso de `TRY...CATCH` y la función **`XACT_STATE()`** para asegurar la Atomicidad en caso de fallo.
+
+La función `XACT_STATE()` devuelve:
+* **1** (*Committable*): Activa y puede ser confirmada/revertida.
+* **-1** (*Uncommittable*): Activa, pero clasificada como **inconfirmable** por un error grave. **Debe ser revertida**.
+* **0** (*No Transaction*): No hay transacción activa.
+
+> **Lógica Esencial**: El bloque `CATCH` debe contener `IF XACT_STATE() = -1 ROLLBACK TRANSACTION`.
+
+### Recomendaciones Estratégicas para Arquitecturas Escalables
+
+1.  **Adopción de RCSI**: Configurar **`READ COMMITTED SNAPSHOT ISOLATION (RCSI)`** como predeterminado para cargas OLTP, reduciendo deadlocks Lector-Escritor y aumentando la escalabilidad.
+2.  **Uso Obligatorio de `XACT_STATE()`**: Implementar `TRY...CATCH` con la verificación `XACT_STATE()` para asegurar la reversión controlada de transacciones inconfirmables.
+3.  **Lógica de Reintento en la Aplicación**: La capa de aplicación debe manejar el **Error 1205** (víctima de deadlock) con una pausa y un reintento (*retry logic*).
+4.  **Optimización Estructural del Log**: Pre-asignar el tamaño de los archivos de Log y **limitar los VLFs** mediante incrementos de `FILEGROWTH` grandes para prevenir latencias causadas por `ASYNC_IO_COMPLETION`.
+
+***
+## Conclusión
+***
+Las **transacciones en SQL Server** son la piedra angular de la integridad de los datos, fundamentadas en el modelo **ACID**. El éxito de un sistema transaccional de alta concurrencia no se define por la capacidad de ejecutar sentencias DML, sino por la capacidad de gestionar de manera eficiente y resiliente las complejas interacciones entre Aislamiento, Bloqueo y Recuperación.
+
+El principal desafío en la arquitectura moderna de SQL Server radica en el manejo de la **concurrencia**: asegurar que los procesos múltiples puedan operar con alto rendimiento sin comprometer la Consistencia. La investigación muestra que la mitigación de contenciones y deadlocks es una tarea compartida que exige tanto una configuración de motor adecuada como una **programación defensiva rigurosa**.
 
 ## TEMA 03: OPTIMIZACIÓN DE ÍNDICES
 ### INTRODUCCION
@@ -243,6 +361,7 @@ En este proyecto estaremos usando los índices agrupados o también conocidos co
 **Cantidad por tabla**: Puede haber múltiples índices no agrupados en una misma tabla.
 
 **Analogía**: Funciona exactamente como el índice alfabético al final de un libro. El índice te dirige rápidamente a los números de página (los punteros) donde se encuentra la información, sin necesidad de que las páginas del libro estén reordenadas.
+
 ## TEMA 04: ÍNDICES COLUMNARES
 
 ### 1. Introducción y Conceptos Fundamentales 
@@ -294,7 +413,9 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 - **Eficiencia de Recursos:** La alta compresión reduce la superficie de memoria necesaria, permitiendo a SQL Server ejecutar más consultas y operaciones en memoria.
 - **Análisis en Tiempo Real:** Permite realizar análisis de alto rendimiento directamente sobre las cargas de trabajo transaccionales activas sin necesidad de mover los datos a un Data Warehouse separado (usando el índice no agrupado).
 
-
+# CAPÍTULO III
+explicar también brevemente, la forma de trabajo y las herramientas que utilizaron en el grupo.
+ 
 # CAPÍTULO IV
 ## MODELO RELACIONAL
 
@@ -302,104 +423,107 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 
 ## Diccionario De Datos
 
-### Tabla: persona
+## Tabla: persona
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| dni | BIGINT | PK | N/A | Documento Nacional de Identidad de la persona. Identificador único. |
+| dni | BIGINT | **PK** | N/A | Documento Nacional de Identidad. **(CHECK > 0)** |
 | nombre | VARCHAR(50) | | N/A | Nombre de la persona. |
 | apellido | VARCHAR(50) | | N/A | Apellido de la persona. |
-| email | VARCHAR(50) | | N/A | Correo electrónico de la persona. |
-| telefono | BIGINT | | N/A | Número de teléfono. |
+| email | VARCHAR(50) | | N/A | Correo electrónico. **(CHECK de formato: '%@%.%')** |
+| telefono | BIGINT | | N/A | Número de teléfono. **(CHECK > 0)** |
 
-### Tabla: cliente
+## Tabla: cliente
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| dni_cliente | BIGINT | PK, FK | persona(dni) | DNI del cliente, referencia a la tabla persona. |
+| dni_cliente | BIGINT | **PK, FK** | **persona(dni)** | DNI del cliente, referencia a la tabla `persona`. |
 
-### Tabla: estado_reserva
+## Tabla: estado_reserva
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_estado | INT | PK | N/A | Identificador único del estado (ej: Confirmada, Cancelada). |
-| estado | VARCHAR(30) | | N/A | Nombre descriptivo del estado. |
+| id_estado | INT | **PK** | N/A | Identificador único del estado. **(IDENTITY, CHECK > 0, UNIQUE)** |
+| estado | VARCHAR(30) | | N/A | Nombre descriptivo del estado (ej: Confirmada, Cancelada). |
 
-### Tabla: reserva
+## Tabla: evento
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_reserva | INT | PK | N/A | Identificador único de la reserva. |
-| fecha_reserva | DATETIME | | N/A | Fecha programada para la reserva. |
-| cant_personas | INT | | N/A | Cantidad de personas de la reserva. |
-| fecha_max_cancelacion | DATE |  | N/A | Columna calculada: 48 horas antes de fecha_reserva |
-| id_estado | INT | FK | estado_reserva(id_estado) | Estado actual de la reserva. |
-| id_evento | INT | FK | evento(id_evento) | Tipo de evento reservado. |
-| dni_cliente | BIGINT | FK | empleado(dni_empleado, id_rol) | Cliente que realiza la reserva. |
-| dni_empleado | BIGINT | FK | empleado(dni_empleado, id_rol) | Empleado que registró la reserva. |
-| id_rol | INT | FK | empleado(dni_empleado, id_rol) | Rol del empleado que registró. |
+| id_evento | INT | **PK** | N/A | Identificador único del evento especial. **(IDENTITY, CHECK > 0, UNIQUE)** |
+| nombre_evento | VARCHAR(30) | | N/A | Nombre del evento (ej: Cumpleaños, Cena normal). |
 
-### Tabla: ubicacion_mesa
+## Tabla: reserva
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_ubicacion | INT | PK | N/A | Identificador único de la zona o área del restaurante. |
+| id_reserva | INT | **PK** | N/A | Identificador único de la reserva. **(IDENTITY, CHECK > 0)** |
+| fecha_reserva | DATETIME | | N/A | Fecha y hora programada para la reserva. |
+| cant_personas | INT | | N/A | Cantidad de personas de la reserva. **(CHECK > 0)** |
+| fecha_max_cancelacion | DATE | | N/A | **Columna Calculada**: 48 horas antes de `fecha_reserva`. |
+| id_estado | INT | **FK** | **estado_reserva(id_estado)** | Estado actual de la reserva. |
+| id_evento | INT | **FK** | **evento(id_evento)** | Tipo de evento reservado. |
+| dni_cliente | BIGINT | **FK** | **cliente(dni_cliente)** | Cliente que realiza la reserva. |
+| dni_empleado | BIGINT | **FK** | **empleado(dni_empleado, id_rol)** | Empleado que registró la reserva. |
+| id_rol | INT | **FK** | **empleado(dni_empleado, id_rol)** | Rol del empleado que registró. **(CHECK solo 3: Mozo)** |
+
+## Tabla: ubicacion_mesa
+| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
+|---------|-------------|--------|-------------------------|-------------|
+| id_ubicacion | INT | **PK** | N/A | Identificador único de la zona o área. **(IDENTITY, UNIQUE)** |
 | ubicacion | VARCHAR(30) | | N/A | Nombre de la ubicación (ej: "Terraza", "Salón"). |
 
-### Tabla: mesa
+## Tabla: mesa
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_mesa | INT | PK | N/A | Identificador único interno de la mesa. |
-| capacidad | INT | | N/A | Máxima capacidad de personas de la mesa. |
-| id_ubicacion | INT | PK, FK | ubicacion_mesa(id_ubicacion) | Ubicación física de la mesa. |
+| id_mesa | INT | **PK** | N/A | Identificador único interno de la mesa. |
+| capacidad | INT | | N/A | Máxima capacidad de personas de la mesa. **(CHECK > 0)** |
+| id_ubicacion | INT | **PK, FK** | **ubicacion_mesa(id_ubicacion)** | Ubicación física de la mesa. |
 
-### Tabla: reserva_mesa
+## Tabla: reserva_mesa
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_reserva | INT | PK, FK | reserva(id_reserva) | Reserva a la que se asigna la mesa. |
-| id_mesa | INT | PK, FK | mesa(id_mesa, id_ubicacion) | Mesa asignada a la reserva. |
-| id_ubicacion | INT | PK, FK | mesa(id_mesa, id_ubicacion) | Ubicación de la mesa asignada. |
+| id_reserva | INT | **PK, FK** | **reserva(id_reserva)** | Reserva a la que se asigna la mesa. |
+| id_mesa | INT | **PK, FK** | **mesa(id_mesa, id_ubicacion)** | Mesa asignada a la reserva. |
+| id_ubicacion | INT | **PK, FK** | **mesa(id_mesa, id_ubicacion)** | Ubicación de la mesa asignada. |
 
-### Tabla: rol_empleado
+## Tabla: rol_empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_rol | INT | PK | N/A | Identificador único del rol (ej: Mesero, Gerente). |
-| descripcion | VARCHAR(30) | | N/A | Nombre descriptivo del rol del empleado. |
+| id_rol | INT | **PK** | N/A | Identificador único del rol. **(IDENTITY, UNIQUE)** |
+| descripcion | VARCHAR(30) | | N/A | Nombre descriptivo del rol (ej: Mesero, Gerente). |
 
-### Tabla: empleado
+## Tabla: turno_empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| dni_empleado | BIGINT | PK, FK | persona(dni) | DNI del empleado, referencia a persona. |
-| id_rol | INT | PK, FK | rol_empleado(id_rol) | Rol asignado al empleado. |
-| id_turno | INT | FK | turno_empleado(id_turno) | Turno asignado al empleado. |
-| activo_en_rol | BIT | FK | N/A | Indicador de rol activo (1) o inactivo (0). |
-
-### Tabla: turno_empleado
-| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
-|---------|-------------|--------|-------------------------|-------------|
-| id_turno | INT | PK | N/A | Identificador único del turno programado. |
+| id_turno | INT | **PK** | N/A | Identificador único del turno programado. **(IDENTITY)** |
 | inicio_turno | TIME | | N/A | Hora de inicio del turno. |
 | fin_turno | TIME | | N/A | Hora de fin del turno. |
 
-### Tabla: metodo_pago
+## Tabla: empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_metodo | INT | PK | N/A | Identificador único del tipo de pago. |
+| dni_empleado | BIGINT | **PK, FK** | **persona(dni)** | DNI del empleado, referencia a persona. |
+| id_rol | INT | **PK, FK** | **rol_empleado(id_rol)** | Rol asignado al empleado. |
+| id_turno | INT | **FK** | **turno_empleado(id_turno)** | Turno asignado al empleado. |
+| activo_en_rol | BIT | | N/A | Indicador si el rol está activo (1) o inactivo (0). |
+
+## Tabla: metodo_pago
+| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
+|---------|-------------|--------|-------------------------|-------------|
+| id_metodo | INT | **PK** | N/A | Identificador único del tipo de pago. **(IDENTITY, UNIQUE)** |
 | forma_pago | VARCHAR(30) | | N/A | Nombre del método (ej: Efectivo, Tarjeta). |
 
-### Tabla: pagos
+## Tabla: pagos
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| id_pago | INT | PK | N/A | Identificador único de la transacción de pago. |
-| monto | DECIMAL(10,2) | | N/A | Monto total del pago realizado. |
+| id_pago | INT | **PK** | N/A | Identificador único de la transacción. **(IDENTITY)** |
+| monto | FLOAT | | N/A | Monto total del pago. **(CHECK > 0)** |
 | fecha_pago | DATE | | N/A | Fecha en que se realizó el pago. |
-| id_metodo | INT | FK | metodo_pago(id_metodo) | Método de pago utilizado. |
-| id_reserva | INT | PK, FK | reserva(id_reserva) | Reserva asociada al pago. |
+| id_metodo | INT | **FK** | **metodo_pago(id_metodo)** | Método de pago utilizado. |
+| id_reserva | INT | **PK, FK** | **reserva(id_reserva)** | Reserva asociada al pago. |
 
-### Tabla: evento
-| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
-|---------|-------------|--------|-------------------------|-------------|
-| id_evento | INT | PK | N/A | Identificador único del evento especial. |
-| nombre_evento | VARCHAR(30) | | N/A | Nombre del evento (ej: Navidad, Catering corporativo). |
+## Analisis Final
 
 
 # CAPÍTULO V
 ## CONCLUSIÓN
+Hemos concluido en que, nuestro trabajo en el Proyecto Restaurant 2025 nos permitió comprender que la solidez de un sistema no solo reside en su esquema relacional, sino en la integridad de su lógica de negocio. Logramos modularizar las operaciones diarias mediante Procedimientos Almacenados, estandarizando el acceso a los datos. La implementación rigurosa de Transacciones ACID con manejo de errores TRY/CATCH fue crucial, enseñándonos a garantizar la fiabilidad del sistema en operaciones críticas como reservas y pagos. Sin embargo, la lección más significativa provino de la fase de optimización: al realizar el benchmarking, comprobamos que una gestión adecuada de los índices (tanto Agrupados simples como compuestos) tiene un impacto directo en el tiempo de respuesta OLTP. Además, la introducción de Índices Columnares demostró una superioridad abrumadora para las consultas analíticas de agregación, confirmando la importancia de seleccionar la estrategia de indexación correcta para cada tipo de carga de trabajo. Concluimos que hemos entregado una base de datos funcional, segura y con un rendimiento validado para la operación a gran escala.
 
 ## Referencias Bibliográficas
 **Fuente Principal (Documentación Oficial de Microsoft):**
@@ -412,9 +536,14 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 
 - Microsoft. (2024). **Índices de almacén de columnas: información general.** Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/indexes/columnstore-indexes-overview?view=sql-server-ver17
 
-- Microsoft(1 de Octubre de 2025). Guía de diseño y arquitectura de índices.Microsoft Learn. Recuperado el 10 de Noviembre de 2025 desde: https://learn.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17#hash_index
+- Microsoft(1 de Octubre de 2025). Guía de diseño y arquitectura de índices.Microsoft Learn. https://learn.microsoft.com/es-es/sql/relational-databases/sql-server-index-design-guide?view=sql-server-ver17#hash_index
 
 - Excel y Mas(2015, 28 de Junio). Creación de Indices | Curso de SQL Server #12[Video]. Youtube. https://www.youtube.com/watch?v=y1TxR53RlYU
 
-- Greg Robidoux(5 de Junio de 2025).Index Scans and Table Scans. MSSQLTips. Recuperado el 11 de Noviembre de 2025 desde: https://www.mssqltips.com/tutorial/index-scans-and-table-scans/
+- Greg Robidoux(5 de Junio de 2025).Index Scans and Table Scans. MSSQLTips.https://www.mssqltips.com/tutorial/index-scans-and-table-scans/
 
+- BEGIN TRANSACTION (Transact-SQL) - SQL Server | Microsoft Learn, https://learn.microsoft.com/en-us/sql/t-sql/language-elements/begin-transaction-transact-sql?view=sql-server-ver17
+
+- TRY...CATCH (Transact-SQL) - SQL Server | Microsoft Learn, https://learn.microsoft.com/en-us/sql/t-sql/language-elements/try-catch-transact-sql?view=sql-server-ver17
+
+- ACID properties in SQL server | Atomicity, Consistency, Isolation and Durability - YouTube, https://www.youtube.com/watch?v=0OYFsJ1-1YA
