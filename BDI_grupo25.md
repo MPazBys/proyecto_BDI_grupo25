@@ -63,8 +63,71 @@ El alcance del sistema está definido por las entidades y relaciones del esquema
 
 ---
 
+# CAPÍTULO II
+## ESTUDIO DE TRABAJO
+
+## TEMA 01: PROCEDIMIENTOS Y FUNCIONES ALMACENADAS
+
+## TEMA 02: TRANSACCIONES
+
+## TEMA 03: OPTIMIZACIÓN DE ÍNDICES
+
+## TEMA 04: ÍNDICES COLUMNARES
+
+### 1. Introducción y Conceptos Fundamentales 
+Un **Índice Columnar (Columnstore Index)** es una tecnología de almacenamiento y procesamiento de datos que organiza los datos a nivel de columna en lugar de a nivel de fila. El objetivo principal de este formato es optimizar las consultas analíticas (scans masivos) en grandes conjuntos de datos, especialmente en entornos de Data Warehousing  (Almacenamiento de Datos).
+
+En cambio, la forma tradicional en cómo se almacenan los datos se denominan **Rowstore**, que es básicamente almacenar físicamente los datos en filas.
+
+En un **Rowgroup** (grupo de filas, forma tradicional), las filas son comprimidas al mismo tiempo con el formato del almacén de columnas. Por el contrario, el almacén de columnas segmenta la tabla en grupos de filas para luego comprimir cada uno de ellos a modo columna.
+
+Para mejorar el rendimiento y reducir la fragmentación de los segmentos, el índice columnar puede almacenar temporalmente algunos datos en un almacén denominado Delta. Este almacén es un grupo de filas Delta que usan índice de árbol B agrupado, teniendo mejoras en cuanto a rendimiento y compresión debido a la utilización de almacenamiento de filas hasta alcanzar 1.048.576 filas para luego moverlas al almacén de columnas.
+
+### 2. Diferencias con los Índices Tradicionales (Rowstore)
+La principal distinción es la organización y el enfoque:
+
+| Aspectos | Columnar (Columnstore) | Tradicional (Rowstore) |
+|----------|------------------------|-------------------------|
+| Organización Física | Los valores de la misma columna se almacenan juntos. | Los valores de una fila completa se almacenan juntos. |
+| Optimización | Consultas analíticas, agregaciones y reportes. | Transacciones (OLTP) y búsquedas por clave. 
+| Rendimiento Analítico | Utiliza la Ejecución en Modo por Lotes (Batch Mode) para procesar miles de filas a la vez. | Procesa datos fila por fila (Row Mode), más lento para grandes volúmenes. |
+| Compresión | Extrema, ya que los valores de una misma columna suelen ser muy similares. | Moderada o estándar (menos eficiente para análisis). |
+
+### 3. Principal Caso de Uso
+#### Escenario Principal
+- El beneficio máximo se obtiene cuando se necesita analizar grandes volúmenes de datos mediante scans masivos para realizar agregaciones, reportes complejos, o análisis de tendencias.
+- Esto se debe a las características únicas del índice columnar:
+- Alto Rendimiento en Consultas Analíticas: Proporcionan hasta 10 veces el rendimiento en comparación con el almacenamiento tradicional orientado a filas, gracias a la Ejecución en Modo por Lotes que procesa múltiples filas a la vez.
+- Compresión Masiva de Datos: Logran hasta 10 veces más compresión de datos. Esto minimiza la E/S (Input/Output) necesaria para leer la información del disco.
+
+#### Escenarios Secundarios (Análisis Operativo)
+- Un caso de uso secundario, pero muy importante, es el análisis operativo en tiempo real.
+- Al usar un índice columnar no agrupado sobre una tabla tradicional (Rowstore), se permite que:
+  - * La carga de trabajo transaccional (OLTP) utiliza el índice de fila subyacente.
+  - * Las consultas analíticas de alto rendimiento utilizan simultáneamente el índice columnar.
+- Esto elimina la necesidad de mover los datos a un sistema separado para el análisis.
+
+### 4. Tipos de Índices Columnares
+Existen dos implementaciones principales, diseñadas para diferentes escenarios:
+- **Agrupado (Clustered Columnstore Index):**
+- 1. Es el almacenamiento primario de la tabla, lo que significa que toda la tabla se almacena en formato columnar.
+- 2. Ideal para tablas de hechos en Data Warehouses donde el análisis es la única prioridad.
+
+- **No Agrupado (Nonclustered Columnstore Index):**
+- 1. Es un índice secundario creado sobre una tabla tradicional (Rowstore). Esto permite el Análisis Operativo en Tiempo Real, donde las transacciones OLTP usan la tabla Rowstore subyacente y las consultas analíticas usan el índice Columnar de alto rendimiento de forma simultánea.
+- 2. Las inserciones pequeñas se gestionan inicialmente en el Deltastore (que usa un índice de árbol B), un almacén temporal que es eficiente para transacciones. Estas filas son luego movidas y comprimidas al almacén de columnas una vez que alcanzan un tamaño suficiente.
+
+### 5. Beneficios Principales
+- **Alto Rendimiento Analítico:** Ofrece hasta 10 veces más velocidad en consultas analíticas que examinan grandes cantidades de datos.
+- **Alta Compresión:** Logra hasta 10 veces más compresión de datos que el almacenamiento sin comprimir, reduciendo costos de almacenamiento y E/S (Input/Output).
+- **Eficiencia de Recursos:** La alta compresión reduce la superficie de memoria necesaria, permitiendo a SQL Server ejecutar más consultas y operaciones en memoria.
+- **Análisis en Tiempo Real:** Permite realizar análisis de alto rendimiento directamente sobre las cargas de trabajo transaccionales activas sin necesidad de mover los datos a un Data Warehouse separado (usando el índice no agrupado).
+
+
 # CAPÍTULO IV
 ## MODELO RELACIONAL
+
+> Modelo Relacional: ![Modelo Relacional](doc/diagrama_BD.jpeg)
 
 ## Diccionario De Datos
 
@@ -185,3 +248,7 @@ El alcance del sistema está definido por las entidades y relaciones del esquema
 |---------|-------------|--------|-------------------------|-------------|
 | ID_reserva | INT | PK, FK | Reserva (ID_reserva) | Reserva asociada al evento especial. |
 | ID_evento | INT | PK, FK | EventoEspecial (ID_evento) | Evento especial al que corresponde la reserva. |
+
+
+# CAPÍTULO V
+## CONCLUSIÓN
