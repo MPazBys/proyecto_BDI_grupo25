@@ -113,16 +113,16 @@ Basado en la documentación de Microsoft, el ciclo de vida y la gestión de un p
 Estos son los procedimientos estándar que los desarrolladores crean y almacenan dentro de una base de datos específica (definida por el usuario). Son el tipo 
 principal que usarás en tu proyecto. Pueden ser escritos en Transact-SQL o hacer referencia a un método CLR (.NET Framework).
 
-    Ejemplo (T-SQL)
-    -- El procedimiento que estamos creando para el proyecto
-    CREATE PROCEDURE sp_InsertarPersona
-        @dni INT,
-        @nombre VARCHAR(100)
-    AS
-    BEGIN
-        INSERT INTO persona (dni, nombre)
-        VALUES (@dni, @nombre);
-    END
+        Ejemplo (T-SQL)
+        -- El procedimiento que estamos creando para el proyecto
+        CREATE PROCEDURE sp_InsertarPersona
+            @dni INT,
+            @nombre VARCHAR(100)
+        AS
+        BEGIN
+            INSERT INTO persona (dni, nombre)
+            VALUES (@dni, @nombre);
+        END
 #### 2. Temporales (Temporary)
 Son una forma especial de procedimientos definidos por el usuario, pero se almacenan en la base de datos temporal (tempdb) en lugar de en la tuya. Se eliminan automáticamente
   - Temporal Local (#):
