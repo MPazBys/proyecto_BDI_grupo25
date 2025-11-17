@@ -301,123 +301,100 @@ Existen dos implementaciones principales, diseñadas para diferentes escenarios:
 
 ## Diccionario De Datos
 
-### Tabla: Cliente
+### Tabla: persona
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| DNI | VARCHAR(15) | PK | N/A | Documento Nacional de Identidad del cliente. Identificador único. |
-| nombre | VARCHAR(100) | | N/A | Nombre del cliente. |
-| apellido | VARCHAR(100) | | N/A | Apellido del cliente. |
-| email | VARCHAR(100) | | N/A | Email del cliente. |
+| dni | BIGINT | PK | N/A | Documento Nacional de Identidad de la persona. Identificador único. |
+| nombre | VARCHAR(50) | | N/A | Nombre de la persona. |
+| apellido | VARCHAR(50) | | N/A | Apellido de la persona. |
+| email | VARCHAR(50) | | N/A | Correo electrónico de la persona. |
+| telefono | BIGINT | | N/A | Número de teléfono. |
 
-### Tabla: TelefonoCliente
+### Tabla: cliente
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| DNI | VARCHAR(15) | FK | Cliente (DNI) | DNI del cliente asociado. |
-| telefono | VARCHAR(20) | PK | N/A | Número de teléfono del cliente. |
+| dni_cliente | BIGINT | PK, FK | persona(dni) | DNI del cliente, referencia a la tabla persona. |
 
-### Tabla: Estado_reserva
+### Tabla: estado_reserva
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_estado | INT | PK | N/A | Identificador único del estado (ej: Confirmada, Cancelada). |
-| estado | VARCHAR(50) | | N/A | Nombre descriptivo del estado. |
+| id_estado | INT | PK | N/A | Identificador único del estado (ej: Confirmada, Cancelada). |
+| estado | VARCHAR(30) | | N/A | Nombre descriptivo del estado. |
 
-### Tabla: Reserva
+### Tabla: reserva
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_reserva | INT | PK | N/A | Identificador único de la reserva. |
-| fecha_reserva | DATE | | N/A | Fecha programada para la reserva. |
-| hora_reserva | TIME | | N/A | Hora programada para la reserva. |
+| id_reserva | INT | PK | N/A | Identificador único de la reserva. |
+| fecha_reserva | DATETIME | | N/A | Fecha programada para la reserva. |
 | cant_personas | INT | | N/A | Cantidad de personas de la reserva. |
-| DNI | VARCHAR(15) | FK | Cliente (DNI) | DNI del cliente que realiza la reserva. |
-| ID_estado | INT | FK | Estado_reserva (ID_estado) | Estado actual de la reserva. |
-| ID_turno | INT | FK | TurnoEmpleado (ID_turno) | Turno de empleado asociado a la gestión de esta reserva (puede ser el que la registró). |
-| DNI_empleado | VARCHAR(15) | FK | Empleado (DNI_empleado) | Empleado que registró o gestionó la reserva. |
+| fecha_max_cancelacion | DATE |  | N/A | Columna calculada: 48 horas antes de fecha_reserva |
+| id_estado | INT | FK | estado_reserva(id_estado) | Estado actual de la reserva. |
+| id_evento | INT | FK | evento(id_evento) | Tipo de evento reservado. |
+| dni_cliente | BIGINT | FK | empleado(dni_empleado, id_rol) | Cliente que realiza la reserva. |
+| dni_empleado | BIGINT | FK | empleado(dni_empleado, id_rol) | Empleado que registró la reserva. |
+| id_rol | INT | FK | empleado(dni_empleado, id_rol) | Rol del empleado que registró. |
 
-### Tabla: HorarioCancelacion
+### Tabla: ubicacion_mesa
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_cancelacion | INT | PK | N/A | Identificador único del registro de cancelación. |
-| ID_reserva | INT | FK | Reserva (ID_reserva) | Reserva que fue cancelada. |
-| motivo | VARCHAR(255) | | N/A | Razón de la cancelación. |
-| fecha_cancelacion | DATE | | N/A | Fecha en que se registró la cancelación. |
-| hora_cancelacion | TIME | | N/A | Hora en que se registró la cancelación. |
+| id_ubicacion | INT | PK | N/A | Identificador único de la zona o área del restaurante. |
+| ubicacion | VARCHAR(30) | | N/A | Nombre de la ubicación (ej: "Terraza", "Salón"). |
 
-### Tabla: UbicacionMesa
+### Tabla: mesa
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_ubicacion | INT | PK | N/A | Identificador único de la zona o área del restaurante. |
-| ubicacion | VARCHAR(100) | | N/A | Nombre de la ubicación (ej: "Terraza", "Salón"). |
-
-### Tabla: Mesa
-| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
-|---------|-------------|--------|-------------------------|-------------|
-| ID_mesa | INT | PK | N/A | Identificador único interno de la mesa. |
-| nro_mesa | INT | | N/A | Número visible o identificador físico de la mesa. |
+| id_mesa | INT | PK | N/A | Identificador único interno de la mesa. |
 | capacidad | INT | | N/A | Máxima capacidad de personas de la mesa. |
-| ID_ubicacion | INT | FK | UbicacionMesa (ID_ubicacion) | Ubicación física de la mesa. |
+| id_ubicacion | INT | PK, FK | ubicacion_mesa(id_ubicacion) | Ubicación física de la mesa. |
 
-### Tabla: Reserva_Mesa
+### Tabla: reserva_mesa
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_reserva | INT | PK, FK | Reserva (ID_reserva) | Reserva a la que se asigna la mesa. |
-| ID_mesa | INT | PK, FK | Mesa (ID_mesa) | Mesa asignada a la reserva. |
-| nro_dia | INT | | N/A | (Uso alternativo) Número de día de la semana. |
-| inicio_dispo | TIME | | N/A | Hora de inicio de la ocupación/disponibilidad para la reserva. |
-| fin_dispo | TIME | | N/A | Hora de fin de la ocupación/disponibilidad para la reserva. |
-| fecha_dispo | DATE | | N/A | Fecha específica de la asignación. |
+| id_reserva | INT | PK, FK | reserva(id_reserva) | Reserva a la que se asigna la mesa. |
+| id_mesa | INT | PK, FK | mesa(id_mesa, id_ubicacion) | Mesa asignada a la reserva. |
+| id_ubicacion | INT | PK, FK | mesa(id_mesa, id_ubicacion) | Ubicación de la mesa asignada. |
 
-### Tabla: RolEmpleado
+### Tabla: rol_empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_rol | INT | PK | N/A | Identificador único del rol (ej: Mesero, Gerente). |
-| nombre_rol | VARCHAR(100) | | N/A | Nombre descriptivo del rol del empleado. |
+| id_rol | INT | PK | N/A | Identificador único del rol (ej: Mesero, Gerente). |
+| descripcion | VARCHAR(30) | | N/A | Nombre descriptivo del rol del empleado. |
 
-### Tabla: Empleado
+### Tabla: empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| DNI_empleado | VARCHAR(15) | PK | N/A | DNI del empleado. Identificador único. |
-| nombre | VARCHAR(100) | | N/A | Nombre del empleado. |
-| apellido | VARCHAR(100) | | N/A | Apellido del empleado. |
-| ID_rol | INT | FK | RolEmpleado (ID_rol) | Rol asignado al empleado. |
+| dni_empleado | BIGINT | PK, FK | persona(dni) | DNI del empleado, referencia a persona. |
+| id_rol | INT | PK, FK | rol_empleado(id_rol) | Rol asignado al empleado. |
+| id_turno | INT | FK | turno_empleado(id_turno) | Turno asignado al empleado. |
+| activo_en_rol | BIT | FK | N/A | Indicador de rol activo (1) o inactivo (0). |
 
-### Tabla: TurnoEmpleado
+### Tabla: turno_empleado
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_turno | INT | PK | N/A | Identificador único del turno programado. |
-| DNI_empleado | VARCHAR(15) | FK | Empleado (DNI_empleado) | Empleado asignado a este turno. |
-| fecha_turno | DATE | | N/A | Fecha del turno de trabajo. |
-| inicio_turno | TIME | | N/A | Hora de inicio de la jornada. |
-| fin_turno | TIME | | N/A | Hora de fin de la jornada. |
-| hr_turno | TIME | | N/A | Duración del turno (horas). |
+| id_turno | INT | PK | N/A | Identificador único del turno programado. |
+| inicio_turno | TIME | | N/A | Hora de inicio del turno. |
+| fin_turno | TIME | | N/A | Hora de fin del turno. |
 
-### Tabla: MetodoPago
+### Tabla: metodo_pago
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_metodo | INT | PK | N/A | Identificador único del tipo de pago. |
-| nombre_pago | VARCHAR(50) | | N/A | Nombre del método (ej: Efectivo, Tarjeta). |
+| id_metodo | INT | PK | N/A | Identificador único del tipo de pago. |
+| forma_pago | VARCHAR(30) | | N/A | Nombre del método (ej: Efectivo, Tarjeta). |
 
-### Tabla: Pagos
+### Tabla: pagos
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_pago | INT | PK | N/A | Identificador único de la transacción de pago. |
-| ID_reserva | INT | FK | Reserva (ID_reserva) | Reserva a la que está asociado el pago. |
+| id_pago | INT | PK | N/A | Identificador único de la transacción de pago. |
 | monto | DECIMAL(10,2) | | N/A | Monto total del pago realizado. |
 | fecha_pago | DATE | | N/A | Fecha en que se realizó el pago. |
-| ID_metodo | INT | FK | MetodoPago (ID_metodo) | Método de pago utilizado. |
-| ID_empleado | VARCHAR(15) | FK | Empleado (DNI_empleado) | Empleado que procesó el pago. |
+| id_metodo | INT | FK | metodo_pago(id_metodo) | Método de pago utilizado. |
+| id_reserva | INT | PK, FK | reserva(id_reserva) | Reserva asociada al pago. |
 
-### Tabla: EventoEspecial
+### Tabla: evento
 | Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
 |---------|-------------|--------|-------------------------|-------------|
-| ID_evento | INT | PK | N/A | Identificador único del evento especial. |
-| nombre_evento | VARCHAR(100) | | N/A | Nombre del evento (ej: Navidad, Catering corporativo). |
-| description | VARCHAR(255) | | N/A | Descripción detallada del evento. |
-
-### Tabla: ReservaEvento
-| Columna | Tipo de Dato | PK/FK | Relación (FK Referencia) | Descripción |
-|---------|-------------|--------|-------------------------|-------------|
-| ID_reserva | INT | PK, FK | Reserva (ID_reserva) | Reserva asociada al evento especial. |
-| ID_evento | INT | PK, FK | EventoEspecial (ID_evento) | Evento especial al que corresponde la reserva. |
+| id_evento | INT | PK | N/A | Identificador único del evento especial. |
+| nombre_evento | VARCHAR(30) | | N/A | Nombre del evento (ej: Navidad, Catering corporativo). |
 
 
 # CAPÍTULO V
