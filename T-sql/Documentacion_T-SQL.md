@@ -111,3 +111,4 @@ El diseño prioriza la Integridad de Datos al trasladar la lógica crítica del 
 3. Coherencia de Empleados: La gestión de roles (Transacción D) es técnicamente sofisticada. El uso del índice único filtrado garantiza que cada empleado tenga un único rol principal activo, previniendo conflictos operativos y simplificando la lógica de permisos en futuras aplicaciones.
 
 En resumen, el código T-SQL cumple su objetivo: blindar el sistema de reservas contra inconsistencias y errores de negocio, estableciendo una base de datos confiable y lista para producción.
+
