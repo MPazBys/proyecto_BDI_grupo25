@@ -141,18 +141,24 @@ Son una forma especial de procedimientos definidos por el usuario, pero se almac
 Estos son los procedimientos preinstalados que vienen con el Motor de Base de Datos. SQL Server los usa para administrar y reportar sobre el estado del sistema.
   - Están almacenados en la base de datos Resource pero aparecen lógicamente en el esquema sys de todas las bases de datos.
   - Comienzan con el prefijo sp_. (Se recomienda no usar sp_ para tus propios procedimientos).
-      Ejemplo:
-      -- Muestra información sobre el objeto 'persona'
-      EXEC sp_help 'persona';
-      -- Muestra las conexiones activas en el servidor
-      EXEC sp_who;
+
+         Ejemplo:
+
+        -- Muestra información sobre el objeto 'persona'
+  
+        EXEC sp_help 'persona';
+  
+        -- Muestra las conexiones activas en el servidor
+        EXEC sp_who;
 
 #### 4. Extendidos Definidos por el Usuario (Extended)
 Estos procedimientos permiten a SQL Server ejecutar rutinas externas escritas en lenguajes como C. Son bibliotecas DLL que el servidor carga y ejecuta dinámicamente.
   - Usan el prefijo xp_: 
-    -- (A menudo deshabilitado por seguridad)
-    -- Ejecuta un comando en el sistema operativo del servidor
-    EXEC xp_cmdshell 'DIR C:';
+
+        -- (A menudo deshabilitado por seguridad)
+
+        -- Ejecuta un comando en el sistema operativo del servidor
+        EXEC xp_cmdshell 'DIR C:';
 
 ### 3. Funciones Definidas por el Usuario (UDF)
 Una función es una rutina que acepta parámetros, realiza una acción (generalmente un cálculo) y siempre debe devolver un valor.
@@ -164,6 +170,7 @@ Una función es una rutina que acepta parámetros, realiza una acción (generalm
       Ejemplo: fn_ReservasDelCliente(@dni)
 #### Uso Principal
   La gran ventaja de las funciones es que se pueden usar directamente dentro de un SELECT o WHERE, algo que los procedimientos no pueden hacer.
+         
       Ejemplo SQL
       -- Se usa como una columna más
       SELECT
